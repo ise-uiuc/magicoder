@@ -1,0 +1,52 @@
+[project]
+authors = [
+  {name = "Yuxiang Wei", email = "yuxiang630.wei@gmail.com"},
+]
+dependencies = [
+  "openai>=1.2.2",
+  "transformers>=4.35.0",
+  "torch>=2.1.0",
+  "tiktoken>=0.5.1",
+  "GitPython>=3.1.40",
+  "datasets>=2.14.6",
+  "numpy>=1.26.1",
+]
+description = "Self-instruct powered by seed code snippets from the wild"
+license = {text = "MIT"}
+name = "magicode"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+version = "0.1.0"
+
+[build-system]
+build-backend = "pdm.backend"
+requires = ["pdm-backend"]
+
+[tool.pdm.dev-dependencies]
+dev = [
+  "evalplus>=0.1.7",
+  "ipython>=8.17.2",
+  "pre-commit>=3.5.0",
+]
+test = [
+  "pytest>=7.4.3",
+]
+
+[tool.black]
+include = '\.pyi?$'
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+line_length = 88
+profile = "black"
+skip_gitignore = true
+
+[tool.mypy]
+check_untyped_defs = true
+follow_imports = "silent"
+ignore_missing_imports = true
+# modules = ["main"]
+mypy_path = "src"
+packages = ["magicode"]
+python_version = "3.10"
