@@ -1,6 +1,8 @@
 # Custom
 .vscode
 /*.jsonl
+/*.json
+/*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
