@@ -1,6 +1,7 @@
 # Magicode
 
 > [!IMPORTANT]
+>
 > **Setting up developing environment**
 > Clone and `cd` into the repo, then run:
 > - `pdm install` or `pip install -e .`
