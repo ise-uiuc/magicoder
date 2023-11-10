@@ -6,7 +6,7 @@ import torch
 from datasets import Dataset, concatenate_datasets, load_dataset
 from transformers import HfArgumentParser, Trainer, TrainingArguments
 
-from magicode.llm_wrapper import (  # ChatPiece,; ChatTokenizationContext,
+from magicoder.llm_wrapper import (  # ChatPiece,; ChatTokenizationContext,
     DecodingConfig,
     EncodingConfig,
     ModelContext,
@@ -14,7 +14,7 @@ from magicode.llm_wrapper import (  # ChatPiece,; ChatTokenizationContext,
     get_model_context,
     pad_sequences,
 )
-from magicode.utils import N_CORES
+from magicoder.utils import N_CORES
 
 # from evalplus.data import get_human_eval
 # from trl import DPOTrainer

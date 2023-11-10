@@ -8,7 +8,7 @@ from datasets import Dataset, load_dataset
 from tqdm.auto import tqdm
 from transformers import HfArgumentParser
 
-import magicode
+import magicoder
 
 # DO NOT CHANGE THE FOLLOWING
 SYSTEM = "You are exceptionally skilled at crafting high-quality programming problems and offering precise solutions."
@@ -54,7 +54,7 @@ class Args:
             SYSTEM,
             ERROR_MARGIN,
         )
-        return magicode.utils.compute_fingerprint(*args, hash_length=5)
+        return magicoder.utils.compute_fingerprint(*args, hash_length=5)
 
 
 def get_map_dataset(args: Args):
@@ -106,12 +106,12 @@ def main():
         if args.max_considered_data is not None
         else "train"
     )
-    assert magicode.utils.OPENAI_CLIENT is not None
+    assert magicoder.utils.OPENAI_CLIENT is not None
     dataset: Dataset = load_dataset(
         args.dataset_name,
         data_dir=args.data_dir,
         split=split,
-        num_proc=magicode.utils.N_CORES,
+        num_proc=magicoder.utils.N_CORES,
     )
     random.seed(args.seed)
     map_fn = get_map_dataset(args)
@@ -127,7 +127,7 @@ def main():
     dataset = dataset.select(range(start_index, end_index))
 
     prompt_template = Path("data/prompt.txt").read_text()
-    timestamp = magicode.utils.timestamp()
+    timestamp = magicoder.utils.timestamp()
     data_fingerprint = args.fingerprint(prompt_template)
     path = Path(f"data-{data_fingerprint}-{timestamp}.jsonl")
     assert not path.exists()
@@ -140,7 +140,7 @@ def main():
         max_new_tokens = min(
             args.max_new_tokens,
             args.model_max_tokens
-            - magicode.utils.num_tokens_from_string(prompt, args.model)
+            - magicoder.utils.num_tokens_from_string(prompt, args.model)
             # error margin (e.g., due to conversation tokens)
             - ERROR_MARGIN,
         )
@@ -151,7 +151,7 @@ def main():
             {"role": "user", "content": prompt},
         ]
         openai_seed = args.seed + example["index"]
-        response = magicode.utils.chat_completions_with_backoff(
+        response = magicoder.utils.chat_completions_with_backoff(
             model=args.model,
             messages=messages,
             max_tokens=max_new_tokens,
