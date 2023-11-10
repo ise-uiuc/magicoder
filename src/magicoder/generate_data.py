@@ -20,6 +20,7 @@ class Args:
     seed_code_start_index: int
     # `seed_code_start_index` + `max_new_data` is the last-to-end seed code index
     max_new_data: int
+    continue_from: str | None = field(default=None)
 
     # Keep the following arguments unchanged for reproducibility
     seed: int = field(default=976)
@@ -129,11 +130,28 @@ def main():
     prompt_template = Path("data/prompt.txt").read_text()
     timestamp = magicoder.utils.timestamp()
     data_fingerprint = args.fingerprint(prompt_template)
-    path = Path(f"data-{data_fingerprint}-{timestamp}.jsonl")
-    assert not path.exists()
-    f_out = path.open("w")
-    print("Saving to", path)
+    if args.continue_from is not None:
+        assert data_fingerprint in args.continue_from, "Fingerprint mismatch"
+        assert f"{start_index}_{end_index}" in args.continue_from, "Index mismatch"
+        old_path = Path(args.continue_from)
+        assert old_path.exists()
+        old_data = magicoder.utils.read_jsonl(old_path)
+        assert len(old_data) > 0
+        last_index = old_data[-1]["index"]
+        n_skipped = last_index - start_index + 1
+        print("Continuing from", old_path)
+        f_out = old_path.open("a")
+    else:
+        path = Path(
+            f"data-{data_fingerprint}-{start_index}_{end_index}-{timestamp}.jsonl"
+        )
+        assert not path.exists()
+        f_out = path.open("w")
+        print("Saving to", path)
+        n_skipped = 0
     for index, example in enumerate(tqdm(dataset)):
+        if index < n_skipped:
+            continue
         assert index + start_index == example["index"]
         prompt = prompt_template.format(code=example["seed"])
         # Make sure the generation is within the context size of the model

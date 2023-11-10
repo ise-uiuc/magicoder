@@ -14,3 +14,12 @@ python src/magicoder/generate_data.py \
   --seed_code_start_index ${START_INDEX_OF_RAW_DATA} \
   --max_new_data ${MAX_DATA_TO_GENERATE}
 ```
+
+To continue an interrupted run, use `--continue_from` flag:
+
+```bash
+python src/magicoder/generate_data.py \
+  --seed_code_start_index ${START_INDEX_OF_RAW_DATA} \
+  --max_new_data ${MAX_DATA_TO_GENERATE} \
+  --continue_from ${PATH_TO_DATA_FILE}
+```
