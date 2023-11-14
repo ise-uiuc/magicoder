@@ -24,10 +24,11 @@ requires = ["pdm-backend"]
 
 [tool.pdm.dev-dependencies]
 dev = [
-  "evalplus>=0.1.7",
-  "ipython>=8.17.2",
-  "pre-commit>=3.5.0",
-  "accelerate>=0.24.1",
+    "evalplus>=0.1.7",
+    "ipython>=8.17.2",
+    "pre-commit>=3.5.0",
+    "accelerate>=0.24.1",
+    "mypy>=1.7.0",
 ]
 test = [
   "pytest>=7.4.3",

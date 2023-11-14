@@ -38,6 +38,13 @@ class Args:
     data_dir: str | None = field(default="python")
     max_considered_data: int | None = field(default=150000)
 
+    tag: str = field(
+        default="",
+        metadata={
+            "help": "Custom tag as part of the output filename, not affecting the fingerprint"
+        },
+    )
+
     def fingerprint(self, prompt_template: str) -> str:
         # The combination of arguments can uniquely determine the generation process
         args = (
@@ -142,8 +149,9 @@ def main():
         print("Continuing from", old_path)
         f_out = old_path.open("a")
     else:
+        tag = "" if args.tag == "" else f"-{args.tag}"
         path = Path(
-            f"data-{data_fingerprint}-{start_index}_{end_index}-{timestamp}.jsonl"
+            f"data{tag}-{data_fingerprint}-{start_index}_{end_index}-{timestamp}.jsonl"
         )
         assert not path.exists()
         f_out = path.open("w")

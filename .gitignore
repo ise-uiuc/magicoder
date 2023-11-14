@@ -3,6 +3,7 @@
 /*.jsonl
 /*.json
 /*.sh
+/*.bak
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

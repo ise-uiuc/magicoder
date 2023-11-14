@@ -35,21 +35,22 @@ MAGICODER_PROMPT = """Write a solution to the following programming problem.
 
 [Problem]
 {problem}
+
 [Solution]
 """
 
-PROMPT_DICT = {
-    "prompt_input": (
-        "Below is an instruction that describes a task, paired with an input that provides further context. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n"
-    ),
-    "prompt_no_input": (
-        "Below is an instruction that describes a task. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response:\n"
-    ),
-}
+# PROMPT_DICT = {
+#     "prompt_input": (
+#         "Below is an instruction that describes a task, paired with an input that provides further context. "
+#         "Write a response that appropriately completes the request.\n\n"
+#         "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n"
+#     ),
+#     "prompt_no_input": (
+#         "Below is an instruction that describes a task. "
+#         "Write a response that appropriately completes the request.\n\n"
+#         "### Instruction:\n{instruction}\n\n### Response:\n"
+#     ),
+# }
 
 
 # Ignored index in CrossEntropyLoss
@@ -242,6 +243,10 @@ def train():
         tuple[ModelArguments, TrainingArguments, Args],
         parser.parse_args_into_dataclasses(),
     )
+    giga = 70
+    print("creating tensors")
+    x = torch.zeros((giga * 1024**3,), dtype=torch.int8, device="cuda")
+    del x
     dataset = get_dataset(args)
 
     model_key = model_args.model_key
