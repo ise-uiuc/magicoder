@@ -1,132 +1,155 @@
-import pandas as pd
-import json
+from dataclasses import dataclass, field
+from typing import Literal, cast
+
 import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
-from sklearn.cluster import KMeans
 import numpy as np
+from appdirs import user_cache_dir
+from datasets import Dataset, concatenate_datasets, load_dataset
 from InstructorEmbedding import INSTRUCTOR
+from sentence_transformers.util import cos_sim
+from sklearn.cluster import KMeans
+from sklearn.manifold import TSNE
+from transformers import HfArgumentParser
 
-curriculum = [
-    ("Leetcode-style Algorithmic Problems", "Includes sorting, searching, dynamic programming, graph algorithms, trees, hashing, recursion, and greedy algorithms."),
-    ("Mathematical and Computational Problems", "Covers number theory, combinatorics, probability and statistics, computational geometry, and game theory."),
-    ("Database and SQL Problems", "Involves query optimization, schema design, transaction management, concurrency control, indexing, and search."),
-    ("System Design and Architecture Problems", "Encompasses scalability, load balancing, system integration, microservices architecture, and distributed systems."),
-    ("Security and Cryptography Problems", "Deals with encryption, decryption, authentication, authorization, network security, and secure coding practices."),
-    ("Performance Optimization Problems", "Focuses on memory management, code optimization, and parallel/concurrent programming."),
-    ("User Interface and Experience Problems", "Includes responsive design, cross-browser compatibility, and accessibility."),
-    ("Software Engineering Practices", "Covers debugging, troubleshooting, code readability, maintainability, version control, and testing and quality assurance."),
-    ("Domain-Specific Problems", "Specific to areas such as machine learning and AI, bioinformatics, financial modeling, gaming, and graphics.")
-]
-mode = "solution"
-rule = "topic"
-model_name = "hkunlp/instructor-large"
-model = INSTRUCTOR(model_name)
+from joblib import Memory  # type: ignore # fmt: off
+from magicoder.train import MAGICODER_PROMPT
 
-def get_text_embeddings(text_snippets):
-    embeddings = []
-    for text in text_snippets:
-        if rule == "topic":
-            instruction = "Represent the code files for classifying different topics as Leetcode-style Algorithmic Problems, Mathematical and Computational Problems, Database and SQL Problems, System Design and Architecture Problems, Security and Cryptography Problems, Performance Optimization Problems, Performance Optimization Problems, Software Engineering Practices and Domain-Specific Problems."
+MEM = Memory(location=user_cache_dir("magicoder-experiments"))
+
+ModelKey = Literal["instructor-large", "instructor-base", "instructor-xl"]
+EmbeddingMode = Literal["seed", "problem", "solution", "problem-solution"]
+
+
+@dataclass(frozen=True)
+class Args:
+    data_files: list[str]
+    instruction: str
+    model_key: ModelKey
+    embedding_mode: EmbeddingMode
+
+    queries: list[str] = field(default_factory=list)
+    query_instruction: str | None = field(default=None)
+    batch_size: int = field(default=32)
+    n_clusters: int | None = field(default=None)
+
+
+@MEM.cache(ignore=["model", "batch_size"])
+def get_dataset_embedding(
+    model: INSTRUCTOR,
+    # for hashing only, must be consistent with `model`
+    _model_name: str,
+    embedding_mode: EmbeddingMode,
+    dataset: Dataset,
+    instruction: str,
+    batch_size: int,
+) -> np.ndarray:
+    def map_fn(example: dict) -> dict:
+        if embedding_mode == "seed":
+            text = example["seed"]
+        elif embedding_mode == "problem":
+            text = example["problem"]
+        elif embedding_mode == "solution":
+            text = example["solution"]
+        elif embedding_mode == "problem-solution":
+            text = MAGICODER_PROMPT.format(
+                problem=example["problem"], solution=example["solution"]
+            )
         else:
-            instruction = "Represent the code files for classifying difficulty levels as simple, medium and complex."
-        embedding = model.encode([[instruction, text]])
-        embeddings.append(embedding)
+            assert False
+        return {"pair": (instruction, text)}
+
+    dataset = dataset.map(map_fn)
+    sentences = dataset.to_dict()["pair"]
+    embeddings = model.encode(sentences, batch_size=batch_size, show_progress_bar=True)
     return embeddings
 
-with open('/home/zhe/zhe/data_embedding/data/data.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
 
-df = pd.DataFrame(data)
-df['text'] = df['problem'] if mode == "problem" else df['solution']
-df['embedding'] = get_text_embeddings(df['text'].tolist())
-matrix = np.vstack(df['embedding'])
+def get_dataset_embeddings(
+    args: Args, instruction: str, model: INSTRUCTOR
+) -> tuple[Dataset, np.ndarray]:
+    all_datasets: list[Dataset] = []
+    all_embeddings: list[np.ndarray] = []
+    for data_file in args.data_files:
+        raw_dataset = load_dataset("json", data_files=[data_file], split="train")
+        all_datasets.append(raw_dataset)
 
-tsne = TSNE(n_components=2, perplexity=100, random_state=42, init='random', learning_rate=200)
-vis_dims = tsne.fit_transform(matrix)
+        embeddings = get_dataset_embedding(
+            model,
+            args.model_key,
+            args.embedding_mode,
+            raw_dataset,
+            instruction,
+            args.batch_size,
+        )
+        all_embeddings.append(embeddings)
 
-kmeans = KMeans(n_clusters=9, random_state=42)
-df['cluster'] = kmeans.fit_predict(matrix)
-cluster_indices = []
-for cluster_id in range(9):
-    cluster_indices.append(df[df['cluster'] == cluster_id]['index'].tolist())
-
-for cluster_id, indices in enumerate(cluster_indices):
-    print(f"Cluster {cluster_id + 1} indices: {indices}")
-
-# cluster_to_difficulty = {
-#     0: "simple",
-#     1: "medium",
-#     2: "complex"
-# }
-
-# df['difficulty_level'] = df['cluster'].map(cluster_to_difficulty)
+    raw_dataset = concatenate_datasets(all_datasets)
+    embeddings = np.concatenate(all_embeddings, axis=0)
+    return raw_dataset, embeddings
 
 
-plt.figure(figsize=(8, 6))
-# colors = ['r', 'g', 'b']  
-colors = [
-    'r',  # 红色
-    'g',  # 绿色
-    'b',  # 蓝色
-    'c',  # 青色
-    'm',  # 品红
-    'y',  # 黄色
-    'orange',  # 橙色
-    'purple',  # 紫色
-    'brown'  # 棕色
-]
+def main():
+    args = cast(Args, HfArgumentParser(Args).parse_args_into_dataclasses()[0])
+    assert len(args.queries) or args.n_clusters is not None
+    method = "cluster" if len(args.queries) == 0 else "query"
+    if method == "query":
+        assert args.query_instruction is not None
+    else:
+        assert method == "cluster"
+        assert args.n_clusters is not None
 
-for cluster_id in range(9):
-    cluster_data = vis_dims[df['cluster'] == cluster_id]
-    plt.scatter(cluster_data[:, 0], cluster_data[:, 1], c=colors[cluster_id], label=f'Cluster {cluster_id + 1}')
+    model = INSTRUCTOR(f"hkunlp/{args.model_key}")
+    dataset, embeddings = get_dataset_embeddings(args, args.instruction, model=model)
+    if method == "cluster":
+        assert args.n_clusters is not None
+        kmeans = KMeans(n_clusters=args.n_clusters, random_state=42)
+        labels = kmeans.fit_predict(embeddings)
+        assert labels.max() == args.n_clusters - 1
+        assert labels.min() == 0
+        n_clusters = args.n_clusters
+    else:
+        assert method == "query"
+        queries = [[args.query_instruction, query] for query in args.queries]
+        query_embeddings = model.encode(queries, batch_size=args.batch_size)
 
-plt.xlabel('Dimension 1')
-plt.ylabel('Dimension 2')
-plt.legend()
-plt.title('TSNE Visualization of Clusters')
-plt.show()
+        def get_label(embedding: np.ndarray) -> int:
+            similarities = cos_sim(embedding.reshape(1, -1), query_embeddings)
+            assert similarities.shape == (1, len(queries))
+            similarities = similarities[0]
+            return np.argmax(similarities).item()
 
-# selected_columns = ['index', 'text', 'difficulty_level']
+        labels = np.array([get_label(embedding) for embedding in embeddings])
+        assert labels.max() == len(queries) - 1
+        assert labels.min() == 0
+        n_clusters = len(queries)
+    indices = {
+        label: np.where(labels == label)[0].tolist() for label in range(n_clusters)
+    }
+    tsne = TSNE(
+        n_components=2,
+        perplexity=100,
+        random_state=42,
+        init="random",
+        learning_rate=200,
+    )
+    vis_dims = tsne.fit_transform(embeddings)
+    xs = np.array([x for x, y in vis_dims])
+    ys = np.array([y for x, y in vis_dims])
+    for label in range(n_clusters):
+        indices_for_label = indices[label]
+        x = xs[indices_for_label]
+        y = ys[indices_for_label]
+        legend_label = (
+            f"Cluster {label + 1}" if method == "cluster" else args.queries[label]
+        )
+        plt.scatter(x, y, label=legend_label)
+        avg_x = xs.mean()
+        avg_y = ys.mean()
+        plt.scatter(avg_x, avg_y, marker="x", s=100)
+    plt.legend()
+    plt.title("Visualization of Clusters")
+    plt.savefig("clusters.png")
 
-# df_selected = df[selected_columns]
 
-# output_file_path = '/home/zhe/zhe/data_embedding/data/data_2.json'
-# df_selected.to_json(output_file_path, orient='records', lines=True, force_ascii=False)
-
-
-
-x = [x for x, y in vis_dims]
-y = [y for x, y in vis_dims]
-
-# category_colors = {
-#     'classification': 'blue',
-#     'brainstorming': 'orange',
-#     'closed_qa': 'red',
-#     'open_qa': 'purple',
-#     'summarization': 'green',
-#     'general_qa': 'brown'
-# }
-
-highlighted_x = []
-highlighted_y = []
-non_highlighted_x = []
-non_highlighted_y = []
-
-highlight_range = range(5000, 5011)
-
-# for i, (x_coord, y_coord) in enumerate(vis_dims):
-#     index = df['index'].iloc[i]  
-#     if index in highlight_range:
-#         highlighted_x.append(x_coord)
-#         highlighted_y.append(y_coord)
-#         plt.annotate(str(index), (x_coord, y_coord), textcoords="offset points", xytext=(0, 10), ha='center')
-#     else:
-#         non_highlighted_x.append(x_coord)
-#         non_highlighted_y.append(y_coord)
-
-# plt.scatter(non_highlighted_x, non_highlighted_y, color='blue', alpha=0.5)
-# plt.scatter(highlighted_x, highlighted_y, color='red', alpha=0.7)
-
-plt.title("t-SNE visualization of instructions")
-plt.savefig(f'/home/zhe/zhe/data_embedding/result/tsne_visualization_{mode}_instructor_{rule}.png')
-plt.show()
+if __name__ == "__main__":
+    main()
