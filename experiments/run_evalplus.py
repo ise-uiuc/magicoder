@@ -43,18 +43,17 @@ def form_wizardcoder_prompt(prompt: str) -> str:
     #     "Write a response that appropriately completes the request.\n\n"
     #     f"### Instruction:\nCreate a Python script for this problem:\n```python\n{prompt}```\n\n### Response:\n```python\n"
     # )
-    return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
+    return f"""Write an appropriate response to the following instruction.
 
-
-### Instruction:
+# Instruction
 Implement the following code:
 ```python
 {prompt}
 ```
 
-### Response:
+# Response
 ```python
-"""
+{prompt.strip()}"""
 
 
 def main():

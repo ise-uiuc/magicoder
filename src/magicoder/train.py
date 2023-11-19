@@ -33,10 +33,10 @@ class ModelArguments:
 
 MAGICODER_PROMPT = """Write a solution to the following programming problem.
 
-[Problem]
+# Problem
 {problem}
 
-[Solution]
+# Solution
 """
 
 # PROMPT_DICT = {
@@ -243,10 +243,6 @@ def train():
         tuple[ModelArguments, TrainingArguments, Args],
         parser.parse_args_into_dataclasses(),
     )
-    giga = 70
-    print("creating tensors")
-    x = torch.zeros((giga * 1024**3,), dtype=torch.int8, device="cuda")
-    del x
     dataset = get_dataset(args)
 
     model_key = model_args.model_key
@@ -266,7 +262,7 @@ def train():
         load_from_cache_file=False,  # not args.overwrite_cache
         desc="Running tokenizer on train dataset",
     )
-    msg = f"#Examples truncated: {sum(train_dataset['exceeding_length'])} / {len(dataset)}"
+    msg = f"#Examples truncated: {sum(train_dataset['exceeding_length'])} / {len(train_dataset)}"
     print(msg)
     # else:
     #     train_dataset = dataset
