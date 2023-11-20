@@ -22,6 +22,12 @@ class Args:
             "help": "The path to the directory containing the analysis of the filtering process. If not provided, no analysis will be performed."
         },
     )
+    no_filter: bool = field(
+        default=False,
+        metadata={
+            "help": "Do not filter the data, but randomize the order of the data in the same way as the filtering process."
+        },
+    )
     seed: int = field(default=666)
 
 
@@ -165,7 +171,7 @@ def save_analysis(chosen_data: list[dict], rejected_data: list[dict], output_dir
 
 def main():
     args = cast(Args, HfArgumentParser(Args).parse_args_into_dataclasses()[0])
-    if args.analysis_dir is not None:
+    if args.analysis_dir is not None and not args.no_filter:
         Path(args.analysis_dir).mkdir(exist_ok=False, parents=False)
     raw_data: list[dict] = []
     for data_file in args.data_files:
@@ -176,14 +182,17 @@ def main():
     random.seed(args.seed)
     random.shuffle(raw_data)
 
-    chosen_data = raw_data
+    if args.no_filter:
+        print("No filtering, just randomizing the order of the data..")
+        write_jsonl(Path(args.output_file), raw_data)
+        return
 
+    chosen_data = raw_data
     chosen_data, rejected_data_1 = filter_same_seed_problem_solution(chosen_data)
     print(f"After filtering: {len(raw_data)} -> {(n_last := len(chosen_data))}")
 
     chosen_data, rejected_data_2 = filter_same_codeblocks(chosen_data)
     print(f"After filtering: {n_last} -> {(n_last := len(chosen_data))}")
-
     write_jsonl(Path(args.output_file), chosen_data)
     if args.analysis_dir is not None:
         print("Saving analysis..")
