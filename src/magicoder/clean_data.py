@@ -8,7 +8,6 @@ from typing import cast
 from tqdm.auto import tqdm
 from transformers import HfArgumentParser
 
-from magicoder.train import MAGICODER_PROMPT
 from magicoder.utils import read_jsonl, write_jsonl
 
 
@@ -159,7 +158,7 @@ def save_analysis(chosen_data: list[dict], rejected_data: list[dict], output_dir
     for lang in all_langs:
         for reason in all_reasons:
             examples = [
-                f"[Seed]\n{d['seed']}\n\n[Prompt]\n{MAGICODER_PROMPT.format(problem=d['problem']) + d['solution']}"
+                f"[Seed]\n{d['seed']}\n\n[Prompt]\n\n[Problem]\n{d['problem']}\n\n[Solution]\n{d['solution']}"
                 for d in rejected_data_dict.get(lang, [])
                 if d["reason"] == reason
             ]

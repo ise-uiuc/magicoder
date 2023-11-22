@@ -6,14 +6,14 @@ import torch
 from datasets import Dataset, concatenate_datasets, load_dataset
 from transformers import HfArgumentParser, Trainer, TrainingArguments
 
-from magicoder.llm_wrapper import (  # ChatPiece,; ChatTokenizationContext,
+from magicoder.llm_wrapper import (
     DecodingConfig,
     EncodingConfig,
-    ModelContext,
     TokenizationContext,
     get_model_context,
     pad_sequences,
 )
+from magicoder.prompt_template import MAGICODER_PROMPT
 from magicoder.utils import N_CORES
 
 
@@ -23,91 +23,68 @@ class ModelArguments:
     model_name_or_path: str | None = None
 
 
-# PROMPT = """Below is an instruction that describes a task. Write a response that appropriately completes the request.
-
-# ### Instruction:
-# {instruction}
-
-# ### Response:
-# """
-
-MAGICODER_PROMPT = """Write a solution to the following programming problem.
-
-# Problem
-{problem}
-
-# Solution
-"""
-
-# PROMPT_DICT = {
-#     "prompt_input": (
-#         "Below is an instruction that describes a task, paired with an input that provides further context. "
-#         "Write a response that appropriately completes the request.\n\n"
-#         "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n"
-#     ),
-#     "prompt_no_input": (
-#         "Below is an instruction that describes a task. "
-#         "Write a response that appropriately completes the request.\n\n"
-#         "### Instruction:\n{instruction}\n\n### Response:\n"
-#     ),
-# }
-
-
 # Ignored index in CrossEntropyLoss
 IGNORED_INDEX = -100
 
 
-def get_map_raw_dataset(args: "Args", context: TokenizationContext):
-    def map_raw_dataset(examples: dict[str, list[str]]) -> dict:
-        prompts = examples["prompt"]
-        completions = examples["completion"]
-        assert len(prompts) == len(completions)
-        prompt_config = EncodingConfig(add_bos=True, add_eos=False)
-        completion_config = EncodingConfig(add_bos=False, add_eos=True)
-        prompt_id_batches = context.encode(prompt_config, prompts)
-        completion_id_batches = context.encode(completion_config, completions)
-        # prompt_id_batches = context.tokenization_context.encode(prompt_config, prompts)
-        # completion_id_batches = context.tokenization_context.encode(
-        #     completion_config, completions
-        # )
-        assert len(prompt_id_batches) == len(completion_id_batches)
-        untruncated_input_ids = [
-            (instruction_ids + response_ids)
-            for instruction_ids, response_ids in zip(
-                prompt_id_batches, completion_id_batches
-            )
-        ]
-        exceeding_length = [
-            len(input_id) > args.max_training_seq_length
-            for input_id in untruncated_input_ids
-        ]
-        input_ids = [
-            input_id[: args.max_training_seq_length]
-            for input_id in untruncated_input_ids
-        ]
-        # NOTE: no need to set EOF to IGNORED_INDEX as it is *implicitly* ignored inside
-        # the model.forward that shifts the logits left by 1
-        labels = [
-            (list(map(lambda _: IGNORED_INDEX, instruction_ids)) + response_ids)[
-                : args.max_training_seq_length
-            ]
-            for instruction_ids, response_ids in zip(
-                prompt_id_batches, completion_id_batches
-            )
-        ]
-        # `len` of each returned value must be the same, which is required by `tokenizer.map`
-        # After `map`, they are treated as individual pieces of data, not as a batch.
-        assert len(input_ids) == len(labels)
-        for input_id_batch, label_batch in zip(input_ids, labels):
-            assert len(input_id_batch) == len(label_batch)
-        print(context.decode(DecodingConfig.default(), input_ids[0:])[0])
-        return {
-            "input_ids": input_ids,
-            "labels": labels,
-            "exceeding_length": exceeding_length,
-        }
+def map_dataset(
+    examples: dict[str, list[str]],
+    args: "Args",
+    context: TokenizationContext,
+) -> dict:
+    instructions = examples["instruction"]
+    responses = examples["response"]
 
-    return map_raw_dataset
+    prompts = [
+        MAGICODER_PROMPT.format(instruction=instruction, response="")
+        for instruction in instructions
+    ]
+    completions = responses
+
+    assert len(prompts) == len(completions)
+    prompt_config = EncodingConfig(add_bos=True, add_eos=False)
+    completion_config = EncodingConfig(add_bos=False, add_eos=True)
+    prompt_id_batches = context.encode(prompt_config, prompts)
+    completion_id_batches = context.encode(completion_config, completions)
+    # prompt_id_batches = context.tokenization_context.encode(prompt_config, prompts)
+    # completion_id_batches = context.tokenization_context.encode(
+    #     completion_config, completions
+    # )
+    assert len(prompt_id_batches) == len(completion_id_batches)
+    untruncated_input_ids = [
+        (instruction_ids + response_ids)
+        for instruction_ids, response_ids in zip(
+            prompt_id_batches, completion_id_batches
+        )
+    ]
+    exceeding_length = [
+        len(input_id) > args.max_training_seq_length
+        for input_id in untruncated_input_ids
+    ]
+    input_ids = [
+        input_id[: args.max_training_seq_length] for input_id in untruncated_input_ids
+    ]
+    # NOTE: no need to set EOF to IGNORED_INDEX as it is *implicitly* ignored inside
+    # the model.forward that shifts the logits left by 1
+    labels = [
+        (list(map(lambda _: IGNORED_INDEX, instruction_ids)) + response_ids)[
+            : args.max_training_seq_length
+        ]
+        for instruction_ids, response_ids in zip(
+            prompt_id_batches, completion_id_batches
+        )
+    ]
+    # `len` of each returned value must be the same, which is required by `tokenizer.map`
+    # After `map`, they are treated as individual pieces of data, not as a batch.
+    assert len(input_ids) == len(labels)
+    for input_id_batch, label_batch in zip(input_ids, labels):
+        assert len(input_id_batch) == len(label_batch)
+    print(context.decode(DecodingConfig.default(), input_ids[0:])[0])
+    return {
+        "input_ids": input_ids,
+        "labels": labels,
+        "exceeding_length": exceeding_length,
+    }
 
 
 def get_data_collator(args: "Args", pad_token_id: int):
@@ -151,90 +128,15 @@ def get_data_collator(args: "Args", pad_token_id: int):
 #     lora_dropout=0.1,
 # )
 
-# N_CORES = 64
-
 
 @dataclass(frozen=True)
 class Args:
     datafile_paths: list[str] = field(default_factory=list)
-    max_training_seq_length: int = field(default=1180)
+    max_training_seq_length: int = field(default=1216)
     pad_to_max_length: bool = field(default=False)
     eval_dataset_size: float = field(
         default=0.05, metadata={"help": "0--1 means ratio, >1 means number of examples"}
     )
-
-
-# def map_wizardcoder_reproduce(examples: dict[str, list[str]]) -> dict[str, list[str]]:
-#     prompts = [
-#         PROMPT.format(instruction=instruction.rstrip())
-#         for instruction in examples["instruction"]
-#     ]
-#     completions = [output.lstrip() for output in examples["output"]]
-#     return {"prompt": prompts, "completion": completions}
-
-
-# def map_code_alpaca(examples: dict[str, list[str]]) -> dict[str, list[str]]:
-#     prompts = [
-#         PROMPT_DICT["prompt_no_input"].format(instruction=instruction)
-#         if input.strip() == ""
-#         else PROMPT_DICT["prompt_input"].format(instruction=instruction, input=input)
-#         for instruction, input in zip(examples["instruction"], examples["input"])
-#     ]
-#     completions = [output.lstrip() for output in examples["output"]]
-#     return {"prompt": prompts, "completion": completions}
-
-
-# def get_wizardcoder_reproduce(config: DatasetConfig) -> Dataset:
-#     # mlabonne/Evol-Instruct-Python-26k
-#     dataset = load_dataset(
-#         "theblackcat102/evol-codealpaca-v1", split="train", num_proc=N_CORES
-#     )
-#     dataset = dataset.map(
-#         map_wizardcoder_reproduce,
-#         batched=True,
-#         num_proc=N_CORES,
-#         remove_columns=dataset.column_names,
-#         load_from_cache_file=False,
-#     )
-#     return dataset
-
-
-# def get_code_alpaca(config: DatasetConfig) -> Dataset:
-#     dataset = load_dataset("sahil2801/CodeAlpaca-20k", split="train", num_proc=N_CORES)
-#     # indices = random.sample(range(len(dataset)), k=config.n_samples)
-#     # dataset = dataset.select(indices)
-#     dataset = dataset.map(
-#         map_code_alpaca,
-#         batched=True,
-#         num_proc=N_CORES,
-#         remove_columns=dataset.column_names,
-#         load_from_cache_file=False,
-#     )
-#     return dataset
-
-
-def get_dataset(args: Args) -> Dataset:
-    dataset = load_dataset("json", data_files=args.datafile_paths, split="train")
-
-    # dataset = dataset.remove_columns(["seed"])
-    # dataset_old = load_dataset(
-    #     "json", data_files=["evol_code_responded.jsonl"], split="train"
-    # )
-    # dataset = concatenate_datasets([dataset, dataset_old])
-    def map_fn(examples: dict[str, list[str]]) -> dict[str, list[str]]:
-        prompts = [
-            MAGICODER_PROMPT.format(problem=problem) for problem in examples["problem"]
-        ]
-        completions = [output.lstrip() for output in examples["solution"]]
-        return {"prompt": prompts, "completion": completions}
-
-    dataset = dataset.map(
-        map_fn,
-        batched=True,
-        num_proc=N_CORES,
-        remove_columns=dataset.column_names,
-    )
-    return dataset
 
 
 def train():
@@ -243,7 +145,7 @@ def train():
         tuple[ModelArguments, TrainingArguments, Args],
         parser.parse_args_into_dataclasses(),
     )
-    dataset = get_dataset(args)
+    dataset = load_dataset("json", data_files=args.datafile_paths, split="train")
 
     model_key = model_args.model_key
     if (model_name_or_path := model_args.model_name_or_path) is None:
@@ -253,9 +155,9 @@ def train():
         model_key, model_name_or_path
     )
     # if dataset_config.dpo_jsonl_path is None or dataset_config.dpo_sft:
-    map_raw_dataset = get_map_raw_dataset(args, tokenization_context)
     train_dataset = dataset.map(
-        map_raw_dataset,
+        function=map_dataset,
+        fn_kwargs=dict(args=args, context=tokenization_context),
         batched=True,
         num_proc=N_CORES,
         remove_columns=dataset.column_names,
@@ -287,25 +189,11 @@ def train():
         tokenization_context,
         inference_mode=False,
     )
-    # Use LoRA when doing DPO
-    # if dataset_config.dpo_jsonl_path is not None and not dataset_config.dpo_sft:
-    #     print("Getting peft model")
-    #     state.model = get_peft_model(state.model, LORA_CONFIG)
 
     print("Parallel mode:", training_args.parallel_mode)
     data_collator = get_data_collator(args, state.tokenization_context.pad_token_id)
 
-    # if dataset_config.dpo_jsonl_path is not None and not dataset_config.dpo_sft:
-    #     print("Ready to do DPO")
-    #     training_args.remove_unused_columns = False
-    #     pad_token_id = state.tokenization_context.pad_token_id
-    #     state.tokenization_context.tokenizer.pad_token_id = pad_token_id
-    #     # state.model = state.model.to("cuda:0")
-    #     # ref_model = state.model.to("cuda:0").eval()
-    #     # from transformers import AutoModelForCausalLM
-
-    #     # print("Loading ref model:", state.model.name_or_path)
-
+    # neftune_noise_alpha
     trainer = Trainer(
         model=state.model,
         args=training_args,

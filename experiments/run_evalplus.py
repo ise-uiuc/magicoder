@@ -8,6 +8,7 @@ from tqdm.auto import tqdm
 from transformers import HfArgumentParser
 
 from magicoder.llm_wrapper import GenerationConfig, get_model_context
+from magicoder.prompt_template import MAGICODER_PROMPT
 from magicoder.utils import chunked
 
 
@@ -37,23 +38,22 @@ PROMPT = """Below is an instruction that describes a task. Write a response that
 """
 
 
-def form_wizardcoder_prompt(prompt: str) -> str:
+def form_prompt(prompt: str) -> str:
     # return (
     #     "Below is an instruction that describes a task. "
     #     "Write a response that appropriately completes the request.\n\n"
     #     f"### Instruction:\nCreate a Python script for this problem:\n```python\n{prompt}```\n\n### Response:\n```python\n"
     # )
-    return f"""Write an appropriate response to the following instruction.
+    #     return f"""Write an appropriate response to the following instruction.
 
-# Instruction
-Implement the following code:
+    # # Instruction
+    instruction = f"""Continue the implementation of the following code:
 ```python
 {prompt}
-```
-
-# Response
-```python
+```"""
+    response = f"""```python
 {prompt.strip()}"""
+    return MAGICODER_PROMPT.format(instruction=instruction, response=response)
 
 
 def main():
@@ -74,7 +74,7 @@ def main():
         task_ids, problems = zip(*task_id_and_problems)
         prompts = [problem["prompt"] for problem in problems]
         if args.prompted:
-            prompts = [form_wizardcoder_prompt(prompt) for prompt in prompts]
+            prompts = [form_prompt(prompt) for prompt in prompts]
         print("PROMPT")
         print(prompts[-1])
         all_prompts = prompts * args.n_samples_per_problem

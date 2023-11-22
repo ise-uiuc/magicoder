@@ -65,18 +65,15 @@ class Args:
         return magicoder.utils.compute_fingerprint(*args, hash_length=5)
 
 
-def get_map_dataset(args: Args):
-    def map_dataset(examples: dict, indices: list[int]) -> dict:
-        random.seed(args.seed + indices[0])
-        seed_snippets = [
-            extract_seed_code(args, content) for content in examples["content"]
-        ]
-        return {
-            "seed": seed_snippets,
-            "raw_index": indices,
-        }
-
-    return map_dataset
+def map_dataset(examples: dict, indices: list[int], args: Args) -> dict:
+    random.seed(args.seed + indices[0])
+    seed_snippets = [
+        extract_seed_code(args, content) for content in examples["content"]
+    ]
+    return {
+        "seed": seed_snippets,
+        "raw_index": indices,
+    }
 
 
 def extract_seed_code(args: Args, document: str) -> str:
@@ -122,9 +119,13 @@ def main():
         num_proc=magicoder.utils.N_CORES,
     )
     random.seed(args.seed)
-    map_fn = get_map_dataset(args)
+    # map_fn = get_map_dataset(args)
     dataset = dataset.map(
-        map_fn, with_indices=True, batched=True, batch_size=args.chunk_size
+        function=map_dataset,
+        fn_kwargs=dict(args=args),
+        with_indices=True,
+        batched=True,
+        batch_size=args.chunk_size,
     )
     dataset = dataset.shuffle(seed=args.seed)
     dataset = dataset.map(lambda _, index: {"index": index}, with_indices=True)

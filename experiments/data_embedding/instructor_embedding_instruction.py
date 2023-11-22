@@ -6,13 +6,13 @@ import numpy as np
 from appdirs import user_cache_dir
 from datasets import Dataset, concatenate_datasets, load_dataset
 from InstructorEmbedding import INSTRUCTOR
+from joblib import Memory  # type: ignore # fmt: off
 from sentence_transformers.util import cos_sim
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
 from transformers import HfArgumentParser
 
-from joblib import Memory  # type: ignore # fmt: off
-from magicoder.train import MAGICODER_PROMPT
+from magicoder.prompt_template import SRC_INSTRUCT_ILLUSTRATION_PROMPT
 
 MEM = Memory(location=user_cache_dir("magicoder-experiments"))
 
@@ -51,7 +51,7 @@ def get_dataset_embedding(
         elif embedding_mode == "solution":
             text = example["solution"]
         elif embedding_mode == "problem-solution":
-            text = MAGICODER_PROMPT.format(
+            text = SRC_INSTRUCT_ILLUSTRATION_PROMPT.format(
                 problem=example["problem"], solution=example["solution"]
             )
         else:

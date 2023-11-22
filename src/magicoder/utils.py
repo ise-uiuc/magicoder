@@ -13,15 +13,15 @@ import tiktoken
 N_CORES = 1 if (count := os.cpu_count()) is None or count == 0 else count // 2
 
 
-def read_jsonl(path: Path) -> list[Any]:
+def read_jsonl(path: str | Path) -> list[Any]:
     """Read lines of JSON from a file (including '\n')."""
-    with path.open("r") as f:
+    with Path(path).open("r") as f:
         return [json.loads(line) for line in f]
 
 
-def write_jsonl(path: Path, data: Sequence[Mapping]):
+def write_jsonl(path: str | Path, data: Sequence[Mapping]):
     # cannot use `dict` here as it is invariant
-    with path.open("w") as f:
+    with Path(path).open("w") as f:
         for item in data:
             f.write(json.dumps(item) + "\n")
 
