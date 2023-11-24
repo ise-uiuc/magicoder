@@ -12,6 +12,14 @@ import re
 import struct
 import time
 import warnings
+
+warnings.warn(
+    "This deduplication strategy is not verified to work. We did not use this in our experiments."
+)
+choice = input("Are you sure you want to continue? [y/n]")
+if choice.lower().strip() != "y":
+    exit()
+
 from collections import defaultdict
 from itertools import tee
 from pathlib import Path

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypedDict, cast
 
-from evalplus.data import get_human_eval_plus, write_jsonl
+from evalplus.data import get_human_eval_plus, get_mbpp_plus, write_jsonl
 from tqdm.auto import tqdm
 from transformers import HfArgumentParser
 
@@ -26,19 +26,9 @@ MBPP_INSTRUCTION = """{nl_description} Your code should satisfy the following as
 Enclose your solution in ```python and ```"""
 
 
-def get_mbpp_raw_problems(is_testset: bool = True) -> list[dict]:
-    testset_range = range(11, 511)
-
-    def is_considered(id: int) -> bool:
-        return id in testset_range if is_testset else id not in testset_range
-
-    path = wget(
-        "https://github.com/google-research/google-research/raw/master/mbpp/mbpp.jsonl"
-    )
-    mbpp_problems: list[dict] = read_jsonl(path)
-
-    problems = [p for p in mbpp_problems if is_considered(p["task_id"])]
-    return problems
+def get_mbpp_raw_problems() -> list[dict]:
+    problems = get_mbpp_plus()
+    return list(problems.values())
 
 
 def get_humaneval_raw_problems() -> list[dict]:
@@ -48,16 +38,22 @@ def get_humaneval_raw_problems() -> list[dict]:
 
 def map_mbpp_problem(p: dict) -> Text2CodeProblem:
     id = p["task_id"]
-    nl_description = p["content"]
-    if not nl_description.endswith("."):
-        nl_description += "."
-    nl_description = nl_description.strip()
-    assertion = p["test_list"][0].strip()
-    instruction = MBPP_INSTRUCTION.format(
-        nl_description=nl_description, assertions=assertion
-    )
+    prompt = p["prompt"]
+    start_index = prompt.index('"""')
+    end_index = prompt.rindex('"""')
+    prompt = prompt[start_index + 3 : end_index]
+    assert_index = prompt.index("assert")
+    instruction = prompt[:assert_index].strip()
+    if not instruction.endswith("."):
+        instruction += "."
+    assertion = prompt[assert_index:].strip()
+    instruction = f"""{instruction} Your code should satisfy the following assertion:
+```python
+{assertion}
+```"""
+    response_prefix = f"""```python"""
     return Text2CodeProblem(
-        id=str(id), instruction=instruction, response_prefix=assertion
+        id=str(id), instruction=instruction, response_prefix=response_prefix
     )
 
 
@@ -91,7 +87,7 @@ class Args:
     n_batches: int
     n_problems_per_batch: int
     n_samples_per_problem: int
-    prompted: bool
+    # prompted: bool
 
     model_name_or_path: str | None = None
 
@@ -105,7 +101,7 @@ def main():
     raw_problem_fn, map_problem_fn = (
         (get_humaneval_raw_problems, map_humaneval_problem)
         if args.dataset == "humaneval"
-        else (lambda: get_mbpp_raw_problems(is_testset=True), map_mbpp_problem)
+        else (get_mbpp_raw_problems, map_mbpp_problem)
     )
     raw_problems = raw_problem_fn()
     problems = list(map(map_problem_fn, raw_problems))

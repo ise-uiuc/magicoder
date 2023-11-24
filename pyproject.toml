@@ -25,7 +25,7 @@ requires = ["pdm-backend"]
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "evalplus>=0.1.7",
+    "evalplus @ git+https://github.com/evalplus/evalplus@mbpp_merge",
     "ipython>=8.17.2",
     "pre-commit>=3.5.0",
     "accelerate>=0.24.1",

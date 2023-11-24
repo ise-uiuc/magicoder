@@ -119,15 +119,6 @@ def get_data_collator(args: "Args", pad_token_id: int):
     return collate
 
 
-# LORA_CONFIG = LoraConfig(
-#     task_type=TaskType.CAUSAL_LM,
-#     inference_mode=False,
-#     r=8,
-#     lora_alpha=32,
-#     lora_dropout=0.1,
-# )
-
-
 @dataclass(frozen=True)
 class Args:
     datafile_paths: list[str] = field(default_factory=list)
@@ -144,7 +135,6 @@ def train():
         tuple[ModelArguments, TrainingArguments, Args],
         parser.parse_args_into_dataclasses(),
     )
-
     dataset = load_dataset("json", data_files=args.datafile_paths, split="train")
 
     model_key = model_args.model_key
