@@ -1,9 +1,8 @@
-import random
 from dataclasses import dataclass, field
-from typing import TypedDict, cast
+from typing import cast
 
 import torch
-from datasets import Dataset, concatenate_datasets, load_dataset
+from datasets import load_dataset
 from transformers import HfArgumentParser, Trainer, TrainingArguments
 
 from magicoder.llm_wrapper import (
@@ -145,6 +144,7 @@ def train():
         tuple[ModelArguments, TrainingArguments, Args],
         parser.parse_args_into_dataclasses(),
     )
+
     dataset = load_dataset("json", data_files=args.datafile_paths, split="train")
 
     model_key = model_args.model_key

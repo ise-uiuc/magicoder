@@ -5,9 +5,9 @@ from datasets import load_dataset
 from transformers import HfArgumentParser
 
 from magicoder.prompt_template import SRC_INSTRUCT_INSTRUCTION_PROMPT
-from magicoder.utils import N_CORES, write_jsonl
+from magicoder.utils import N_CORES, read_jsonl, write_jsonl
 
-DatasetKey = Literal["evol-instruct", "codealpaca", "src-instruct"]
+DatasetKey = Literal["evol-instruct", "codealpaca", "src-instruct", "combine"]
 
 
 @dataclass(frozen=True)
@@ -69,20 +69,31 @@ def map_fn(example: dict, key: DatasetKey) -> dict:
 
 def main():
     args = cast(Args, HfArgumentParser(Args).parse_args_into_dataclasses()[0])
-    dataset = load_dataset(
-        args.dataset_path,
-        data_files=args.data_files,
-        split=args.split,
-        num_proc=N_CORES,
-    )
-    dataset = dataset.map(
-        map_fn,
-        fn_kwargs=dict(key=args.key),
-        batched=True,
-        num_proc=N_CORES,
-        remove_columns=dataset.column_names,
-    )
-    write_jsonl(args.output_file, dataset)
+    if args.key == "combine":
+        assert args.dataset_path == "json" and args.data_files is not None
+        all_data: list[dict] = []
+        for data_file in args.data_files:
+            data = read_jsonl(data_file)
+            all_data.extend(
+                dict(instruction=item["instruction"], response=item["response"])
+                for item in data
+            )
+        write_jsonl(args.output_file, all_data)
+    else:
+        dataset = load_dataset(
+            args.dataset_path,
+            data_files=args.data_files,
+            split=args.split,
+            num_proc=N_CORES,
+        )
+        dataset = dataset.map(
+            map_fn,
+            fn_kwargs=dict(key=args.key),
+            batched=True,
+            num_proc=N_CORES,
+            remove_columns=dataset.column_names,
+        )
+        write_jsonl(args.output_file, dataset)
 
 
 if __name__ == "__main__":

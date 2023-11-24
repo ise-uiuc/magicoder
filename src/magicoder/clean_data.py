@@ -1,6 +1,7 @@
 import itertools
 import json
 import random
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import cast
@@ -190,14 +191,18 @@ def main():
     chosen_data, rejected_data_1 = filter_same_seed_problem_solution(chosen_data)
     print(f"After filtering: {len(raw_data)} -> {(n_last := len(chosen_data))}")
 
-    chosen_data, rejected_data_2 = filter_same_codeblocks(chosen_data)
-    print(f"After filtering: {n_last} -> {(n_last := len(chosen_data))}")
+    warnings.warn(
+        "In practice, filtering data whose solution copies the problem does not help much."
+        "So we disabled it. But this conclusion remains to be verified."
+    )
+    # chosen_data, rejected_data_2 = filter_same_codeblocks(chosen_data)
+    # print(f"After filtering: {n_last} -> {(n_last := len(chosen_data))}")
     write_jsonl(Path(args.output_file), chosen_data)
     if args.analysis_dir is not None:
         print("Saving analysis..")
         save_analysis(
             chosen_data,
-            rejected_data_1 + rejected_data_2,
+            rejected_data_1,  # + rejected_data_2,
             Path(args.analysis_dir),
         )
 

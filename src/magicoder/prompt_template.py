@@ -1,5 +1,5 @@
 # Used to train the model
-MAGICODER_PROMPT = """You are a helpful coding assistant that responds appropriately to user instructions.
+MAGICODER_PROMPT = """You are an exceptionally intelligent coding assistant that consistently delivers accurate and reliable responses to user instructions.
 
 @@ Instruction
 {instruction}
