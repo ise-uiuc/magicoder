@@ -5,7 +5,7 @@
 groups = ["default", "test", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:047a39cc5ea8d55004e9a455d87375b2f3100c9d006c01e9b18f921afcd43062"
+content_hash = "sha256:850697c0bb2d9eacdc5c75767e82700b80d56c7877faa597a0b7a43c7c4fe603"
 
 [[package]]
 name = "accelerate"
@@ -159,6 +159,23 @@ summary = "Classes Without Boilerplate"
 files = [
     {file = "attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
     {file = "attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
+]
+
+[[package]]
+name = "bigcode-eval"
+version = "0.0.0"
+editable = true
+path = "../bigcode-evaluation-harness"
+summary = "A framework for the evaluation of autoregressive code generation language models."
+dependencies = [
+    "accelerate>=0.13.2",
+    "datasets>=2.6.1",
+    "evaluate>=0.3.0",
+    "fsspec<2023.10.0",
+    "huggingface-hub>=0.11.1",
+    "mosestokenizer==1.0.0",
+    "pyext==0.7",
+    "transformers>=4.25.1",
 ]
 
 [[package]]
@@ -379,12 +396,17 @@ files = [
 ]
 
 [[package]]
+name = "docopt"
+version = "0.6.2"
+summary = "Pythonic argument parser, that will make you smile"
+files = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
+
+[[package]]
 name = "evalplus"
-version = "0.2.0.dev294"
+version = "0.2.0"
 requires_python = ">=3.8"
-git = "https://github.com/evalplus/evalplus"
-ref = "mbpp_merge"
-revision = "fe5a49145f25eb5fa820e4a888df415951bfa154"
 summary = "\"EvalPlus for rigourous evaluation of LLM-synthesized code\""
 dependencies = [
     "appdirs>=1.4.4",
@@ -393,6 +415,34 @@ dependencies = [
     "tempdir>=0.7.1",
     "tqdm>=4.56.0",
     "wget>=3.2",
+]
+files = [
+    {file = "evalplus-0.2.0-py3-none-any.whl", hash = "sha256:679b9b90abc134586a2b8a732b294b83810245e4c2aa78a30c3d78d84d506166"},
+    {file = "evalplus-0.2.0.tar.gz", hash = "sha256:e0aae09bf90372863275bb08fcaf93fe3a8253cf78ebe3a84676fd6d54ae936d"},
+]
+
+[[package]]
+name = "evaluate"
+version = "0.4.1"
+requires_python = ">=3.7.0"
+summary = "HuggingFace community-driven open-source library of evaluation"
+dependencies = [
+    "datasets>=2.0.0",
+    "dill",
+    "fsspec[http]>=2021.05.0",
+    "huggingface-hub>=0.7.0",
+    "multiprocess",
+    "numpy>=1.17",
+    "packaging",
+    "pandas",
+    "requests>=2.19.0",
+    "responses<0.19",
+    "tqdm>=4.62.1",
+    "xxhash",
+]
+files = [
+    {file = "evaluate-0.4.1-py3-none-any.whl", hash = "sha256:3ff079ab09572c0a2c1e6d749887c19f6783ab993320412cd39f6fe501d28510"},
+    {file = "evaluate-0.4.1.tar.gz", hash = "sha256:d721d9f2059ced79770d8a0509e954fbd1bbac96a8f9160e29888d8073cda3d9"},
 ]
 
 [[package]]
@@ -500,28 +550,28 @@ files = [
 
 [[package]]
 name = "fsspec"
-version = "2023.10.0"
+version = "2023.9.2"
 requires_python = ">=3.8"
 summary = "File-system specification"
 files = [
-    {file = "fsspec-2023.10.0-py3-none-any.whl", hash = "sha256:346a8f024efeb749d2a5fca7ba8854474b1ff9af7c3faaf636a4548781136529"},
-    {file = "fsspec-2023.10.0.tar.gz", hash = "sha256:330c66757591df346ad3091a53bd907e15348c2ba17d63fd54f5c39c4457d2a5"},
+    {file = "fsspec-2023.9.2-py3-none-any.whl", hash = "sha256:603dbc52c75b84da501b9b2ec8c11e1f61c25984c4a0dda1f129ef391fbfc9b4"},
+    {file = "fsspec-2023.9.2.tar.gz", hash = "sha256:80bfb8c70cc27b2178cc62a935ecf242fc6e8c3fb801f9c571fc01b1e715ba7d"},
 ]
 
 [[package]]
 name = "fsspec"
-version = "2023.10.0"
+version = "2023.9.2"
 extras = ["http"]
 requires_python = ">=3.8"
 summary = "File-system specification"
 dependencies = [
     "aiohttp!=4.0.0a0,!=4.0.0a1",
-    "fsspec==2023.10.0",
+    "fsspec==2023.9.2",
     "requests",
 ]
 files = [
-    {file = "fsspec-2023.10.0-py3-none-any.whl", hash = "sha256:346a8f024efeb749d2a5fca7ba8854474b1ff9af7c3faaf636a4548781136529"},
-    {file = "fsspec-2023.10.0.tar.gz", hash = "sha256:330c66757591df346ad3091a53bd907e15348c2ba17d63fd54f5c39c4457d2a5"},
+    {file = "fsspec-2023.9.2-py3-none-any.whl", hash = "sha256:603dbc52c75b84da501b9b2ec8c11e1f61c25984c4a0dda1f129ef391fbfc9b4"},
+    {file = "fsspec-2023.9.2.tar.gz", hash = "sha256:80bfb8c70cc27b2178cc62a935ecf242fc6e8c3fb801f9c571fc01b1e715ba7d"},
 ]
 
 [[package]]
@@ -871,6 +921,20 @@ files = [
 ]
 
 [[package]]
+name = "mosestokenizer"
+version = "1.0.0"
+summary = "Wrappers for several pre-processing scripts from the Moses toolkit."
+dependencies = [
+    "docopt",
+    "openfile",
+    "toolwrapper",
+]
+files = [
+    {file = "mosestokenizer-1.0.0-py3-none-any.whl", hash = "sha256:4de94102c00ad21ea26c1d8327bf72d38288c6c83c9b2920fb9a86c66eddf8b7"},
+    {file = "mosestokenizer-1.0.0.tar.gz", hash = "sha256:2d65a781add83e93612a5e491a2cfc9c3740048b8a028556a4e23fceb1a7d48a"},
+]
+
+[[package]]
 name = "mpmath"
 version = "1.3.0"
 summary = "Python library for arbitrary-precision floating-point arithmetic"
@@ -1211,6 +1275,15 @@ files = [
 ]
 
 [[package]]
+name = "openfile"
+version = "0.0.7"
+summary = "A convenience function that delegates to the appropriate standard library function."
+files = [
+    {file = "openfile-0.0.7-py3-none-any.whl", hash = "sha256:d21b69dba1306c9dd397a44fd8f4fa8a83812f1d935c409085e8a25c411d16ec"},
+    {file = "openfile-0.0.7.tar.gz", hash = "sha256:ea4e8f19112049f578ec161b12f70c1113144988c0a488ab173a138b50f37479"},
+]
+
+[[package]]
 name = "packaging"
 version = "23.2"
 requires_python = ">=3.7"
@@ -1534,6 +1607,14 @@ files = [
 ]
 
 [[package]]
+name = "pyext"
+version = "0.7"
+summary = "Simple Python extensions."
+files = [
+    {file = "pyext-0.7.tar.gz", hash = "sha256:e618a635be4e8c4a84b443cc27186601ad052efe35f01839815f2a2cf3947cdf"},
+]
+
+[[package]]
 name = "pygments"
 version = "2.16.1"
 requires_python = ">=3.7"
@@ -1690,6 +1771,20 @@ dependencies = [
 files = [
     {file = "requests-2.31.0-py3-none-any.whl", hash = "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"},
     {file = "requests-2.31.0.tar.gz", hash = "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"},
+]
+
+[[package]]
+name = "responses"
+version = "0.18.0"
+requires_python = ">=3.7"
+summary = "A utility library for mocking out the `requests` Python library."
+dependencies = [
+    "requests<3.0,>=2.0",
+    "urllib3>=1.25.10",
+]
+files = [
+    {file = "responses-0.18.0-py3-none-any.whl", hash = "sha256:15c63ad16de13ee8e7182d99c9334f64fd81f1ee79f90748d527c28f7ca9dd51"},
+    {file = "responses-0.18.0.tar.gz", hash = "sha256:380cad4c1c1dc942e5e8a8eaae0b4d4edf708f4f010db8b7bcfafad1fcd254ff"},
 ]
 
 [[package]]
@@ -1943,6 +2038,16 @@ files = [
 ]
 
 [[package]]
+name = "termcolor"
+version = "2.3.0"
+requires_python = ">=3.7"
+summary = "ANSI color formatting for output in terminal"
+files = [
+    {file = "termcolor-2.3.0-py3-none-any.whl", hash = "sha256:3afb05607b89aed0ffe25202399ee0867ad4d3cb4180d98aaf8eefa6a5f7d475"},
+    {file = "termcolor-2.3.0.tar.gz", hash = "sha256:b5b08f68937f138fe92f6c089b99f1e2da0ae56c52b78bf7075fd95420fd9a5a"},
+]
+
+[[package]]
 name = "threadpoolctl"
 version = "3.2.0"
 requires_python = ">=3.8"
@@ -2060,6 +2165,14 @@ summary = "A lil' TOML parser"
 files = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+
+[[package]]
+name = "toolwrapper"
+version = "2.1.0"
+summary = "A base class for wrapping text-processing tools"
+files = [
+    {file = "toolwrapper-2.1.0.tar.gz", hash = "sha256:128088c93cb02fcaa6701c488e62e027f45ca5597b5c9bcf28816ad70e830bf7"},
 ]
 
 [[package]]

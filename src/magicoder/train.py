@@ -198,6 +198,7 @@ def train():
     trainer.train(resume_from_checkpoint=training_args.resume_from_checkpoint)
     trainer.save_state()
     trainer.save_model(training_args.output_dir)
+    state.tokenization_context.tokenizer.save_pretrained(training_args.output_dir)
 
 
 if __name__ == "__main__":
