@@ -217,6 +217,13 @@ class GenerationConfig:
     max_new_tokens: int
     top_p: float
     temperature: float
+    max_length: int = field(
+        default=99999999999999999,
+        metadata={
+            "help": "The max length of the sequence to generate, including inputs."
+            "Will be considered in tandem with max_new_tokens. Whichever is more restrictive will be used."
+        },
+    )
 
     def to_transformers_generation_config(
         self, eos_token_id: int, pad_token_id: int
@@ -266,7 +273,12 @@ class ModelContext:
                 f"Input length {input_len} >= Context size {self.max_context_size}"
             )
         assert input_len < self.max_context_size
-        max_context_size = min(self.max_context_size - input_len, config.max_new_tokens)
+
+        max_context_size = min(
+            self.max_context_size - input_len,
+            config.max_new_tokens,
+            config.max_length - input_len,
+        )
         config = config.with_max_new_tokens_being(max_context_size)
 
         tf_config = config.to_transformers_generation_config(
@@ -317,18 +329,6 @@ class ModelContext:
     #     )
 
 
-def form_starcoder_infill(prefix: str, suffix: str) -> str:
-    FIM_PREFIX = "<fim_prefix>"
-    FIM_MIDDLE = "<fim_middle>"
-    FIM_SUFFIX = "<fim_suffix>"
-    prompt = f"{FIM_PREFIX}{prefix}{FIM_SUFFIX}{suffix}{FIM_MIDDLE}"
-    return prompt
-
-
-# def form_codellama_infill(prefix: str, suffix: str) -> str:
-#     return f"{prefix}<FILL_ME>{suffix}"
-
-
 class SupportedModelKeys(Enum):
     # StarCoder-based models
     STARCODER_15B = "bigcode/starcoder"
@@ -341,6 +341,9 @@ class SupportedModelKeys(Enum):
     CODELLAMA_PYTHON_7B = "codellama/CodeLlama-7b-Python-hf"
     CODELLAMA_PYTHON_13B = "codellama/CodeLlama-13b-Python-hf"
     CODELLAMA_PYTHON_34B = "codellama/CodeLlama-34b-Python-hf"
+
+    # DeepSeek-Coder-based models
+    DEEPSEEK_CODER_6_7B = "deepseek-ai/deepseek-coder-6.7b-base"
 
     @staticmethod
     def all() -> list[str]:
@@ -372,6 +375,10 @@ class SupportedModelKeys(Enum):
             SupportedModelKeys.WIZARDCODER_STARCODER_15B.value,
         ]
 
+    @staticmethod
+    def deepseekcoder_based_models() -> list[str]:
+        return [SupportedModelKeys.DEEPSEEK_CODER_6_7B.value]
+
 
 def get_model_context(
     model_key: str,
@@ -386,9 +393,11 @@ def get_model_context(
         model_name_or_path = model_key
     if model_key in SupportedModelKeys.codellama_based_models():
         max_context_size = 16384
-    else:
-        assert model_key in SupportedModelKeys.starcoder_based_models()
+    elif model_key in SupportedModelKeys.starcoder_based_models():
         max_context_size = 8192
+    else:
+        assert model_key in SupportedModelKeys.deepseekcoder_based_models()
+        max_context_size = 16384
     if tokenization_context is None:
         tokenization_context = TokenizationContext.from_model_key(model_key)
     # TODO: check if all these models use bfloat16
@@ -402,9 +411,52 @@ def get_model_context(
     return ModelContext(tokenization_context, model, max_context_size)
 
 
-def get_infilling_func(model_key: str) -> Callable[[str, str], str] | None:
-    # Only starcoder-based models are supported for now
-    # "Code Llama and Code Llama - Instruct 7B and 13B models are capable of filling in code given the surrounding context."
+def form_starcoder_infill(prefix: str, suffix: str) -> str:
+    FIM_PREFIX = "<fim_prefix>"
+    FIM_MIDDLE = "<fim_middle>"
+    FIM_SUFFIX = "<fim_suffix>"
+    prompt = f"{FIM_PREFIX}{prefix}{FIM_SUFFIX}{suffix}{FIM_MIDDLE}"
+    return prompt
+
+
+def form_codellama_infill(prefix: str, suffix: str) -> str:
+    # NOTE: not using <FILL_ME> because it's treated as a special token
+    # but we pass `add_special_tokens=False` to the tokenizer
+    return f"▁<PRE>{prefix}▁<SUF>{suffix}▁<MID>"
+
+
+def form_deepseekcoder_infill(
+    tokenizer: PreTrainedTokenizer, prefix: str, suffix: str
+) -> str:
+    def get_str(idx: int) -> str:
+        return tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(idx))
+
+    FIM_PREFIX = get_str(32016)
+    FIM_MIDDLE = get_str(32015)
+    FIM_SUFFIX = get_str(32017)
+    assert "begin" in FIM_PREFIX and "hole" in FIM_MIDDLE and "end" in FIM_SUFFIX
+    prompt = f"{FIM_PREFIX}{prefix}{FIM_MIDDLE}{suffix}{FIM_SUFFIX}"
+    return prompt
+
+
+def create_infilling_prompt(
+    model_key: str,
+    prefix: str,
+    suffix: str,
+    tokenizer: PreTrainedTokenizer | None = None,
+) -> str:
+    """TODO: how to separate magicoder from the others (magicoder now has a base
+    model key. Consider change it?)"""
     if model_key in SupportedModelKeys.starcoder_based_models():
-        return form_starcoder_infill
-    return None
+        return form_starcoder_infill(prefix, suffix)
+    elif (
+        model_key in SupportedModelKeys.codellama_based_models()
+        and not "python" in model_key.lower()
+    ):
+        return form_codellama_infill(prefix, suffix)
+    elif model_key in SupportedModelKeys.deepseekcoder_based_models():
+        assert tokenizer is not None
+        return form_deepseekcoder_infill(tokenizer, prefix, suffix)
+
+    # TODO: other models
+    assert False, f"Unsupported model key: {model_key}"

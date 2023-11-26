@@ -5,7 +5,7 @@
 groups = ["default", "test", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:850697c0bb2d9eacdc5c75767e82700b80d56c7877faa597a0b7a43c7c4fe603"
+content_hash = "sha256:78bb13177cced22e9100f36bafc0967dbfb080ae9af05bd05742b70734a484d5"
 
 [[package]]
 name = "accelerate"
@@ -405,8 +405,10 @@ files = [
 
 [[package]]
 name = "evalplus"
-version = "0.2.0"
+version = "0.3.0.dev6"
 requires_python = ">=3.8"
+editable = true
+path = "../evalplus"
 summary = "\"EvalPlus for rigourous evaluation of LLM-synthesized code\""
 dependencies = [
     "appdirs>=1.4.4",
@@ -415,10 +417,6 @@ dependencies = [
     "tempdir>=0.7.1",
     "tqdm>=4.56.0",
     "wget>=3.2",
-]
-files = [
-    {file = "evalplus-0.2.0-py3-none-any.whl", hash = "sha256:679b9b90abc134586a2b8a732b294b83810245e4c2aa78a30c3d78d84d506166"},
-    {file = "evalplus-0.2.0.tar.gz", hash = "sha256:e0aae09bf90372863275bb08fcaf93fe3a8253cf78ebe3a84676fd6d54ae936d"},
 ]
 
 [[package]]
