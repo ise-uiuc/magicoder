@@ -428,12 +428,12 @@ def form_codellama_infill(prefix: str, suffix: str) -> str:
 def form_deepseekcoder_infill(
     tokenizer: PreTrainedTokenizer, prefix: str, suffix: str
 ) -> str:
-    def get_str(idx: int) -> str:
-        return tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(idx))
+    def get_token(idx: int) -> str:
+        return tokenizer.convert_ids_to_tokens([idx])[0]
 
-    FIM_PREFIX = get_str(32016)
-    FIM_MIDDLE = get_str(32015)
-    FIM_SUFFIX = get_str(32017)
+    FIM_PREFIX = get_token(32016)
+    FIM_MIDDLE = get_token(32015)
+    FIM_SUFFIX = get_token(32017)
     assert "begin" in FIM_PREFIX and "hole" in FIM_MIDDLE and "end" in FIM_SUFFIX
     prompt = f"{FIM_PREFIX}{prefix}{FIM_MIDDLE}{suffix}{FIM_SUFFIX}"
     return prompt
