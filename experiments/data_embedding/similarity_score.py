@@ -8,8 +8,8 @@ import torch.nn.functional as F
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from datasets import load_dataset
-
-# plt.rcParams['text.usetex'] = True
+import colorsys
+plt.rcParams['text.usetex'] = True
 
 def load_scores(file_path):
     with open(file_path, 'r') as file:
@@ -33,26 +33,49 @@ def plot_scores(oss_scores, evol_scores, codealpaca_scores):
     percentage_counts_evol = {score: count / num_samples_evol for score, count in score_counts_evol.items()}
     percentage_counts_codealpaca = {score: count / num_samples_codealpaca for score, count in score_counts_codealpaca.items()}
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(6, 3.5))
 
-    plt.bar(percentage_counts_evol.keys(), percentage_counts_evol.values(), color='Royalblue', width=0.01, alpha=0.6, label=r'\textsc{Evol-Instruct}')
-    plt.axvline(x=avg_score_evol, color='royalblue', linestyle='-.', label=f'Avg Evol-Instruct: {avg_score_evol:.3f}') 
-    plt.bar(percentage_counts_codealpaca.keys(), percentage_counts_codealpaca.values(), color='Tomato', width=0.01, alpha=0.6, label=r'\textsc{CodeAlpaca}')
-    plt.bar(percentage_counts_oss.keys(), percentage_counts_oss.values(), color='Gold', width=0.01, alpha=0.6, label=r'\textsc{OSS-Instruct}')
+    sorted_keys_oss = sorted(percentage_counts_oss.keys())
+    sorted_keys_evol = sorted(percentage_counts_evol.keys())
+    sorted_keys_codealpaca = sorted(percentage_counts_codealpaca.keys())
+
+    color1 = (59/255, 117/255, 175/255)  
+    color2 = (82/255, 159/255, 64/255)  
+    color3 = (239/255, 139/255, 54/255) 
+    hsv_color1 = colorsys.rgb_to_hsv(*color1)
+    hsv_color2 = colorsys.rgb_to_hsv(*color2)
+    hsv_color3 = colorsys.rgb_to_hsv(*color3)
+
+    saturated_color1 = colorsys.hsv_to_rgb(hsv_color1[0], 0.5, hsv_color1[2])
+    saturated_color2 = colorsys.hsv_to_rgb(hsv_color2[0], 0.5, hsv_color2[2])
+    saturated_color3 = colorsys.hsv_to_rgb(hsv_color3[0], 0.7, hsv_color3[2])
+
+
+    plt.plot(sorted_keys_evol, [percentage_counts_evol[k] for k in sorted_keys_evol], color=saturated_color1, alpha=1, label=r'Evol-Instruct')
+    plt.plot(sorted_keys_codealpaca, [percentage_counts_codealpaca[k] for k in sorted_keys_codealpaca], color=saturated_color2, alpha=1, label=r'Code Alpaca')
+    plt.plot(sorted_keys_oss, [percentage_counts_oss[k] for k in sorted_keys_oss], color=saturated_color3, alpha=1, label=r'\textsc{OSS-Instruct}')
+
+    plt.fill_between(sorted_keys_evol, [percentage_counts_evol[k] for k in sorted_keys_evol], color=saturated_color1, alpha=0.6)
+    plt.fill_between(sorted_keys_codealpaca, [percentage_counts_codealpaca[k] for k in sorted_keys_codealpaca], color=saturated_color2, alpha=0.6)
+    plt.fill_between(sorted_keys_oss, [percentage_counts_oss[k] for k in sorted_keys_oss], color=saturated_color3, alpha=0.6)
 
     plt.xlabel("Cosine Similarity Score", fontsize=22)
     plt.ylabel("Percentage", fontsize=22)
     plt.xlim(0, 0.5)
+    plt.ylim(bottom=0)  
     plt.xticks(np.arange(0, 0.55, 0.1))
+    plt.yticks(np.arange(0, 0.16, 0.02), [f'{i:.2f}' for i in np.arange(0, 0.16, 0.02)])  labels
     plt.tick_params(axis='both', labelsize=14)
-
-    plt.axvline(x=avg_score_oss, color='darkgoldenrod', linestyle='--', label=f'Avg OSS-Instruct: {avg_score_oss:.3f}')
-    plt.axvline(x=avg_score_codealpaca, color='orangered', linestyle='--', label=f'Avg CodeAlpaca: {avg_score_codealpaca:.3f}')
+    plt.axvline(x=avg_score_evol, color='royalblue', linestyle='-.', label=r'Avg Score for Evol-Instruct: ' + f'{avg_score_evol:.3f}') 
+    plt.axvline(x=avg_score_codealpaca, color='Forestgreen', linestyle='--', label=r'Avg Score for Code Alpaca: ' + f'{avg_score_codealpaca:.3f}')  
+    plt.axvline(x=avg_score_oss, color='orangered', linestyle='--', label=r'Avg Score for \textsc{OSS-Instruct}: ' + f'{avg_score_oss:.3f}')  
 
     plt.legend()
     plt.tight_layout()
     plt.show()
     plt.savefig(f'/home/zhe/similarity_data/similarity.png')
+
+
 
 def load_data_oss(file_paths):
     all_problem_solutions = []
