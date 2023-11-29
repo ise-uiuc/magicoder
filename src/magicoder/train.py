@@ -127,6 +127,7 @@ class Args:
     eval_dataset_size: float = field(
         default=0.05, metadata={"help": "0--1 means ratio, >1 means number of examples"}
     )
+    use_flash_attention: bool = field(default=False)
 
 
 def train():
@@ -178,6 +179,7 @@ def train():
         model_name_or_path,
         tokenization_context,
         inference_mode=False,
+        use_flash_attention=args.use_flash_attention,
     )
 
     print("Parallel mode:", training_args.parallel_mode)

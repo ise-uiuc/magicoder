@@ -26,11 +26,16 @@ def main():
     for data in all_data:
         if (
             data["lang"] == "python"
-            or "python" in data["instruction"] + data["response"]
+            and "python" in (data["instruction"] + data["response"]).lower()
         ):
             python_data.append(data)
-        else:
+        elif (
+            data["lang"] != "python"
+            and "python" not in (data["instruction"] + data["response"]).lower()
+        ):
             other_data.append(data)
+    print(f"Python data: {len(python_data)}")
+    print(f"Other data: {len(other_data)}")
     random.seed(args.seed)
     python_data = random.sample(python_data, k=args.n_datapoints)
     other_data = random.sample(other_data, k=args.n_datapoints)

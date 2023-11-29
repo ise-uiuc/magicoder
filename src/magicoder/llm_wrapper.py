@@ -385,6 +385,7 @@ def get_model_context(
     model_name_or_path: str | None = None,
     tokenization_context: TokenizationContext | None = None,
     inference_mode: bool = True,
+    use_flash_attention: bool = False,
 ) -> ModelContext:
     # `model_key` defines the model and the tokenizer to use, while `model_name_or_path`
     # defines where to load the weights. It can be from a local directory.
@@ -402,7 +403,11 @@ def get_model_context(
         tokenization_context = TokenizationContext.from_model_key(model_key)
     # TODO: check if all these models use bfloat16
     dtype = torch.bfloat16
-    other_kwargs = {"device_map": "auto"} if inference_mode else {}
+    other_kwargs: dict = {}
+    if inference_mode:
+        other_kwargs["device_map"] = "auto"
+    if use_flash_attention:
+        other_kwargs["use_flash_attention_2"] = True
     model = AutoModelForCausalLM.from_pretrained(
         model_name_or_path,
         torch_dtype=dtype,

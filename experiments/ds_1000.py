@@ -26,8 +26,8 @@ class Args:
     temperature: float = field(default=0.2)
     top_p: float = field(default=0.5)
     max_length: int = field(default=1024)
-    n_samples_per_batch: int = field(default=20)
-    n_batches: int = field(default=2)
+    n_samples_per_batch: int = field(default=10)
+    n_batches: int = field(default=4)
 
     def to_generation_config(self) -> GenerationConfig:
         return GenerationConfig(
