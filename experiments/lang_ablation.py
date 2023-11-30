@@ -12,6 +12,7 @@ from magicoder.utils import read_jsonl, write_jsonl
 class Args:
     data_files: list[str]
     seed: int = field(default=1)
+    conservative: bool = field(default=True)
     n_datapoints: int = field(default=30000)
 
 
@@ -24,7 +25,12 @@ def main():
     python_data: list[dict] = []
     other_data: list[dict] = []
     for data in all_data:
-        if (
+        if not args.conservative:
+            if "```python" in data["instruction"] + data["response"]:
+                python_data.append(data)
+            else:
+                other_data.append(data)
+        elif (
             data["lang"] == "python"
             and "python" in (data["instruction"] + data["response"]).lower()
         ):
@@ -37,11 +43,13 @@ def main():
     print(f"Python data: {len(python_data)}")
     print(f"Other data: {len(other_data)}")
     random.seed(args.seed)
-    python_data = random.sample(python_data, k=args.n_datapoints)
-    other_data = random.sample(other_data, k=args.n_datapoints)
+    if args.conservative:
+        python_data = random.sample(python_data, k=args.n_datapoints)
+        other_data = random.sample(other_data, k=args.n_datapoints)
 
-    output_path_python = Path("data-ablation-python.jsonl")
-    output_path_others = Path("data-ablation-non_python.jsonl")
+    tag = "" if args.conservative else "-unbalanced"
+    output_path_python = Path(f"data-ablation-python{tag}.jsonl")
+    output_path_others = Path(f"data-ablation-non_python{tag}.jsonl")
 
     def ask_and_write(path: Path, data: list[dict]):
         write_data = True

@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Literal, cast
@@ -13,6 +14,17 @@ from magicoder.llm_wrapper import (
     get_model_context,
 )
 from magicoder.prompt_template import MAGICODER_PROMPT
+
+WIZARDCODER_PROMPT = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+### Instruction:
+{instruction}
+
+### Response:
+{response}"""
+
+PROMPT = MAGICODER_PROMPT if os.getenv("WIZARDCODER") is None else WIZARDCODER_PROMPT
+print("Using prompt:")
+print(PROMPT)
 
 
 @dataclass
@@ -60,7 +72,7 @@ def create_prompt(
     else:
         assert args.mode == "Completion"
         instruction, response_prefix = preprocess_completion_prompt(problem["prompt"])
-        prompt = MAGICODER_PROMPT.format(
+        prompt = PROMPT.format(
             instruction=instruction,
             response=response_prefix,
         )
