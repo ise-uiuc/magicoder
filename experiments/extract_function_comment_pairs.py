@@ -105,6 +105,10 @@ def main(args):
 
     function_comment_pairs = []
     success = 0
+    if args.use_cover == "True":
+        use_cover = True
+    else:
+        use_cover = False
     for snippet in tqdm(dataset_raw):
         snippet = json.loads(snippet)
         LANG = snippet['lang']
@@ -113,6 +117,9 @@ def main(args):
         # if LANG == "csharp" and snippet['max_stars_repo_path'].endswith(".cshtml"):
         #     continue
         parser = parsers[LANG]
+        if snippet['seed'].startswith("<reponame>") or snippet['seed'].startswith("<filename>"):
+            # remove the first line
+            snippet['seed'] = snippet['seed'][snippet['seed'].index("\n") + 1 :]
         blob = snippet['content']
         if isinstance(blob, str):
             code = bytes(blob, "utf8")
@@ -150,8 +157,8 @@ def main(args):
                 comments.append(comment_dict)
 
         # extract range of the seed
-        content_lines = snippet['content'].split("\n")
-        seed_lines = snippet['seed'].split("\n")
+        content_lines = snippet['content'].splitlines(keepends=True)
+        seed_lines = snippet['seed'].splitlines(keepends=True)
         seed_start_line = -1
         seed_end_line = -1
         for i in range(len(content_lines)-len(seed_lines)+1):
@@ -160,6 +167,7 @@ def main(args):
             if content_lines[i:i+len(seed_lines)] == seed_lines:
                 seed_start_line = i+1
                 seed_end_line = i+len(seed_lines)
+        assert content_lines[seed_start_line-1:seed_end_line] == seed_lines
         seed_range = list(range(seed_start_line, seed_end_line+1))
 
         # extract covered methods
@@ -169,7 +177,13 @@ def main(args):
                 methods_covered.append(method)
         
         # extract docstring for covered methods
-        for method in methods_covered:
+        for method in methods:
+            if use_cover:
+                if method not in methods_covered:
+                    continue
+            else:
+                if method in methods_covered:
+                    continue
             method["docstring"] = ''
             if LANG == "python":
                 for block_node in method["node"].children:
@@ -194,13 +208,19 @@ def main(args):
         
         # save results
         snippet['function'] = []
-        for method in methods_covered:
+        for method in methods:
+            if use_cover:
+                if method not in methods_covered:
+                    continue
+            else:
+                if method in methods_covered:
+                    continue
             snippet['function'].append({"function": method["content"], "docstring": method["docstring"]})
         function_comment_pairs.append(snippet)
-    with open(args.output_path, 'w') as outfile:
-        for entry in function_comment_pairs:
-            json.dump(entry, outfile)
-            outfile.write('\n')
+    # with open(args.output_path, 'w') as outfile:
+    #     for entry in function_comment_pairs:
+    #         json.dump(entry, outfile)
+    #         outfile.write('\n')
     print("#Function-docstring pairs:", success)
 
 
@@ -209,5 +229,6 @@ if __name__ == '__main__':
     parser.add_argument("--datafile_path", type=str, default="/scratch/data-raw.jsonl")
     parser.add_argument("--output_path", type=str, default="/scratch/data-raw-with-function-docstring.jsonl")
     parser.add_argument("--treesitter_path", type=str, default="util/")
+    parser.add_argument("--use_cover", type=str, default="True")
     args = parser.parse_args()
     main(args)
