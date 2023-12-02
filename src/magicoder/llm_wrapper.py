@@ -343,7 +343,9 @@ class SupportedModelKeys(Enum):
     CODELLAMA_PYTHON_34B = "codellama/CodeLlama-34b-Python-hf"
 
     # DeepSeek-Coder-based models
+    DEEPSEEK_CODER_1_3B = "deepseek-ai/deepseek-coder-1.3b-base"
     DEEPSEEK_CODER_6_7B = "deepseek-ai/deepseek-coder-6.7b-base"
+    DEEPSEEK_CODER_33B = "deepseek-ai/deepseek-coder-33b-base"
 
     @staticmethod
     def all() -> list[str]:
@@ -377,7 +379,11 @@ class SupportedModelKeys(Enum):
 
     @staticmethod
     def deepseekcoder_based_models() -> list[str]:
-        return [SupportedModelKeys.DEEPSEEK_CODER_6_7B.value]
+        return [
+            SupportedModelKeys.DEEPSEEK_CODER_1_3B.value,
+            SupportedModelKeys.DEEPSEEK_CODER_6_7B.value,
+            SupportedModelKeys.DEEPSEEK_CODER_33B.value,
+        ]
 
 
 def get_model_context(
