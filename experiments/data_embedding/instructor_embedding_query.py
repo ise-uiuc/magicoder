@@ -144,7 +144,7 @@ def main():
             plt.scatter(avg_x, avg_y, marker="x", s=100)
         plt.legend()
         plt.title("Visualization of Clusters")
-        plt.savefig("clusters.png")
+        plt.savefig("Clusters.png")
     else:
         assert method == "query"
         queries = [[args.query_instruction, query] for query in args.queries]
