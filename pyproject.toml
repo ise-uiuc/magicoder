@@ -42,6 +42,9 @@ dev = [
     "-e file:///${PROJECT_ROOT}/../evalplus#egg=evalplus",
     "-e file:///${PROJECT_ROOT}/../bigcode-evaluation-harness#egg=bigcode-eval",
     "termcolor>=2.3.0",
+    "treelib>=1.7.0",
+    "tree-sitter>=0.20.4",
+    "black>=23.11.0",
 ]
 test = [
   "pytest>=7.4.3",
