@@ -14,8 +14,8 @@
 
 <p align="left">
     <a href="#-magicoder-models">🎩 Magicoder Models</a>
-    <a href="#-training-dataset">📑 Training Dataset</a>
-    <a href="#-quick-start-demo">🚀 Quick Start</a>
+    | <a href="#-training-dataset">📑 Training Dataset</a>
+    | <a href="#-quick-start-demo">🚀 Quick Start</a>
 </p>
 
 > [!IMPORTANT]
