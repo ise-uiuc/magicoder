@@ -16,15 +16,15 @@
 
 |  Model  |  Checkpoint  | Size    | HumanEval (+) |   MBPP (+) | Demo | License |
 | ----- |------| ---- |------|-------| ----- |  ----- | 
-|  Magicoder-CL  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-CL-7B" target="_blank">HF Link</a>   |  7B  |  60.4 (55.5)   | 64.2 (52.6) | -- |  --  |
-|  Magicoder*S*-CL  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B" target="_blank">HF Link</a>   |  7B  |  70.7 (66.5)   | 68.4 (56.6) | -- |  --  |
-|  Magicoder-DS  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  66.5 (60.4)   | 75.4 (61.9) | -- |  --  |
-|  Magicoder*S*-DS  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  **76.8** (**70.7**)   | **75.7** (**64.4**) | -- |  --  |
+|  Magicoder-CL-7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-CL-7B" target="_blank">HF Link</a>   |  7B  |  60.4 (55.5)   | 64.2 (52.6) | -- |  --  |
+|  Magicoder-*S*-CL-7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B" target="_blank">HF Link</a>   |  7B  |  70.7 (66.5)   | 68.4 (56.6) | -- |  --  |
+|  Magicoder-DS-6.7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  66.5 (60.4)   | 75.4 (61.9) | -- |  --  |
+|  Magicoder-*S*-DS-6.7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  **76.8** (**70.7**)   | **75.7** (**64.4**) | -- |  --  |
 
-## OSS-Instruct Dataset
+## Training Dataset
 
-- [**Magicoder_oss_instruct_75k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k)
-- [**Magicoder_evol_instruct_110k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k)
+- [Magicoder-OSS-Instruct-75K](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k): generated through **OSS-Instruct** using `gpt-3.5-turbo-1106` and used to train both Magicoder and Magicoder-S series.
+- [Magicoder-Evol-Instruct-110K](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k): decontaminated and redistributed from [theblackcat102/evol-codealpaca-v1](https://huggingface.co/datasets/theblackcat102/evol-codealpaca-v1), used to further finetune Magicoder series and obtain Magicoder-S models.
 
 ## Quick Start
 
