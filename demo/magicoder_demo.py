@@ -8,7 +8,7 @@ import gradio as gr
 
 
 def main(
-    base_model="ise-uiuc/Magicoder-CL-7B",
+    base_model="ise-uiuc/Magicoder-S-DS-6.7B",
     device="cuda:0",
     port=8080,
 ):

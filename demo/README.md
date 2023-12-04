@@ -6,7 +6,7 @@ We provide the inference demo script for Magicoder-Family.
 2. Run the command:
 ```bash
 CUDA_VISIBLE_DEVICES=1 python magicoder_demo.py \
-   --base_model "ise-uiuc/Magicoder-CL-7B" \
+   --base_model "ise-uiuc/Magicoder-S-DS-6.7B" \
    --device "cuda:0" \
    --port 8080
 ```
