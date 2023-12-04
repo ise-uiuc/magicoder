@@ -3,11 +3,13 @@
 <p align="left">
     <a href="https://arxiv.org/abs/1234.56789"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg?style=for-the-badge">
     <a href="https://opensource.org/license/mit/"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge">
+    <a href="https://huggingface.co/ise-uiuc/"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-ise--uiuc-%23ff8811.svg?style=for-the-badge">
 </p>
+<!-- <a href="https://huggingface.co/ise-uiuc"><img src="https://huggingface.co/datasets/huggingface/badges/resolve/main/follow-me-on-HF-xl.svg"></a> -->
 
 <!--     <a href="https://hub.docker.com/r/universefly/repilot/tags"><img src="https://img.shields.io/badge/docker-universefly%2Frepilot-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"></a> -->
 
-[jw: add toc after the sections are ready]
+<!-- [jw: add toc after the sections are ready] -->
 
 ## About
 
