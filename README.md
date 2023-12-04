@@ -1,10 +1,18 @@
-# Magicoder: Source Code Is All You Need
+# 🎩 Magicoder: Source Code Is All You Need
 
-This is the repo for our paper "Magicoder: Source Code Is All You Need"!
+<p align="center">
+    <a href="https://arxiv.org/abs/1234.5678"><img src="https://img.shields.io/badge/arXiv-1234.5678-b31b1b.svg"></a>
+    <a href="https://github.com/ise-uiuc/magicoder/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+    <a href="https://huggingface.co/ise-uiuc"><img src="https://huggingface.co/datasets/huggingface/badges/resolve/main/follow-me-on-HF-sm.svg"></a>
+</p>
 
-## News
+[jw: add toc after the sections are ready]
 
-- 🔥🔥🔥[2023/12/04] We have released our **Magicoder-CL-7B**, **Magicoder*S*-CL-7B**, **Magicoder-DS-6.7B**, and **Magicoder*S*-DS-6.7B**! Our **Magicoder*S*-DS-6.7B** model achieves the **76.8 pass@1** on the [HumanEval Benchmarks](https://github.com/openai/human-eval), which surpasses **DeepSeek-Coder-Instruct-6.7B** with ×8 fewer training tokens, outperforms **WizardCoder-CL-34B** and **ChatGPT-3.5**, and also closely matches **DeepSeek-Coder-Instruct-34B**!
+## About
+
+[jw: add a few lines of desc on what we have and highlight/prioritize what's new]
+
+## Magicoder Models
 
 |  Model  |  Checkpoint  | Size    | HumanEval (+) |   MBPP (+) | Demo | License |
 | ----- |------| ---- |------|-------| ----- |  ----- | 
@@ -13,24 +21,25 @@ This is the repo for our paper "Magicoder: Source Code Is All You Need"!
 |  Magicoder-DS  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  66.5 (60.4)   | 75.4 (61.9) | -- |  --  |
 |  Magicoder*S*-DS  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  **76.8** (**70.7**)   | **75.7** (**64.4**) | -- |  --  |
 
-- 🔥🔥🔥[2023/12/04] We have released our Magicoder datasets: [**Magicoder_oss_instruct_75k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k) and [**Magicoder_evol_instruct_110k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k)!
+## OSS-Instruct Dataset
+
+- [**Magicoder_oss_instruct_75k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k)
+- [**Magicoder_evol_instruct_110k**](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k)
+
+## Quick Start
+
+[jw: inline the demo instead of redirecting it to a new link. put most things into code. add some concise desc.]
+
+```bash
+git clone https://github.com/ise-uiuc/magicoder.git
+cd magicoder
+pdm install
+python magicoder_demo.py --base_model "ise-uiuc/Magicoder-S-DS-6.7B" \
+                         --device "cuda:0" --port 8080
+```
 
 
-## Overview
-
-TODO
-
-## Setup and Demo
-
-> [!IMPORTANT]
-> **Setting up developing environment**
-> - Clone and `cd` into the repo, then run:
-> - `pdm install` or `pip install -e .`
-
-You can find an inference demo of Magicoder [here](https://github.com/ise-uiuc/magicoder/tree/main/demo).
-
-
-## Data generation
+## Generating Synthetic Data with OSS-Instruct
 
 Make sure you have set up your `OPENAI_API_KEY` and optionally `OPENAI_BASE_URL`. Then run with
 
@@ -49,7 +58,7 @@ python src/magicoder/generate_data.py \
   --continue_from ${PATH_TO_DATA_FILE}
 ```
 
-## Fine-tuning
+## Fine-tuning over OSS-Instruct Datasets
 
 TODO
 
