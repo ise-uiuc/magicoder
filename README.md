@@ -1,10 +1,11 @@
 # 🎩 Magicoder: Source Code Is All You Need
 
-<p align="center">
-    <a href="https://arxiv.org/abs/1234.5678"><img src="https://img.shields.io/badge/arXiv-1234.5678-b31b1b.svg"></a>
-    <a href="https://github.com/ise-uiuc/magicoder/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
-    <a href="https://huggingface.co/ise-uiuc"><img src="https://huggingface.co/datasets/huggingface/badges/resolve/main/follow-me-on-HF-sm.svg"></a>
+<p align="left">
+    <a href="https://arxiv.org/abs/1234.56789"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg?style=for-the-badge">
+    <a href="https://opensource.org/license/mit/"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge">
 </p>
+
+<!--     <a href="https://hub.docker.com/r/universefly/repilot/tags"><img src="https://img.shields.io/badge/docker-universefly%2Frepilot-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"></a> -->
 
 [jw: add toc after the sections are ready]
 
@@ -29,7 +30,7 @@
 - [Magicoder-OSS-Instruct-75K](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k): generated through **OSS-Instruct** using `gpt-3.5-turbo-1106` and used to train both Magicoder and Magicoder-S series.
 - [Magicoder-Evol-Instruct-110K](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k): decontaminated and redistributed from [theblackcat102/evol-codealpaca-v1](https://huggingface.co/datasets/theblackcat102/evol-codealpaca-v1), used to further finetune Magicoder series and obtain Magicoder-S models.
 
-## Quick Start
+## Quick Start (Demo)
 
 [jw: inline the demo instead of redirecting it to a new link. put most things into code. add some concise desc.]
 
@@ -40,7 +41,6 @@ pdm install
 python magicoder_demo.py --base_model "ise-uiuc/Magicoder-S-DS-6.7B" \
                          --device "cuda:0" --port 8080
 ```
-
 
 ## Generating Synthetic Data with OSS-Instruct
 
