@@ -33,11 +33,18 @@ def main(
 """ 
         prompt = MAGICODER_PROMPT.format(instruction=instruction)
 
-        sequences = pipeline(
-            prompt,
-            temperature=temperature,
-            max_new_tokens=max_new_tokens,
-        )
+        if temperature > 0:
+            sequences = pipeline(
+                prompt,
+                do_sample=True,
+                temperature=temperature,
+                max_new_tokens=max_new_tokens,
+            )
+        else:
+            sequences = pipeline(
+                prompt,
+                max_new_tokens=max_new_tokens,
+            )
         for seq in sequences:
             print('==========================question=============================')
             print(prompt)
@@ -52,9 +59,9 @@ def main(
             gr.components.Textbox(
                 lines=3, label="Instruction", placeholder="Anything you want to ask Magicoder ?"
             ),
-            gr.components.Slider(minimum=0, maximum=1, value=0, label="Temperature"),
+            gr.components.Slider(minimum=0, maximum=1, value=1, label="Temperature"),
             gr.components.Slider(
-                minimum=1, maximum=2048, step=1, value=128, label="Max tokens"
+                minimum=1, maximum=2048, step=1, value=512, label="Max tokens"
             ),
         ],
         outputs=[
