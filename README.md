@@ -15,7 +15,8 @@
     🎩 <a href="#-magicoder-models">Magicoder Models</a>
     | 📑 <a href="#-training-dataset">Training Dataset</a>
     | 🚀 <a href="#-quick-start">Quick Start</a>
-    | 👀 <a href="#-building-inference-demo">Building Inference Demo</a>
+    | 👀 <a href="#-inference-demo">Inference Demo</a>
+    | 🙏 <a href="#-acknowledgements">Acknowledgements</a>
 </p>
 
 > [!IMPORTANT]
@@ -127,7 +128,7 @@ print(todo.get_tasks())  # Output: []
 ```
 ``````
 
-## 👀 Building Inference Demo
+## 👀 Inference Demo
 
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
@@ -156,4 +157,19 @@ python src/magicoder/generate_data.py \
 
 ## Citation
 
-TODO
+```bibtex
+@misc{magicoder,
+    title={Magicoder: Source Code Is All You Need}, 
+    author={Yuxiang Wei and Zhe Wang and Jiawei Liu and Yifeng Ding and Lingming Zhang},
+    year={2023},
+    eprint={2312.02120},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+```
+
+## 🙏 Acknowledgements
+
+- [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder)
+- [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder)
+- [CodeLlama](https://ai.meta.com/research/publications/code-llama-open-foundation-models-for-code/)
