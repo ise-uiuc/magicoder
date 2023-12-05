@@ -24,6 +24,7 @@
 * 🪄**OSS-Instruct** mitigates the *inherent bias* of the LLM-synthesized instruction data by empowering them with *a wealth of open-source references* to produce more diverse, realistic, and controllable data.
 
 ![Overview of OSS-Instruct](assets/overview.svg)
+![Overview of Result](assets/result.png)
 
 ## 🎩 Models
 
