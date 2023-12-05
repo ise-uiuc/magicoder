@@ -53,6 +53,7 @@
 ```bash
 git clone https://github.com/ise-uiuc/magicoder.git
 cd magicoder
+pip install pdm
 pdm install
 python magicoder_demo.py --base_model "ise-uiuc/Magicoder-S-DS-6.7B" \
                          --device "cuda:0" --port 8080
