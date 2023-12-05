@@ -16,6 +16,7 @@
     | 📑 <a href="#-training-dataset">Training Dataset</a>
     | 🚀 <a href="#-quick-start">Quick Start</a>
     | 👀 <a href="#-inference-demo">Inference Demo</a>
+    | 📝 <a href="#-citation">Citation</a>
     | 🙏 <a href="#-acknowledgements">Acknowledgements</a>
 </p>
 
@@ -31,12 +32,12 @@
 
 ## 🎩 Magicoder Models
 
-|  Model  |  Checkpoint  | Size    | HumanEval (+) |   MBPP (+) | Demo | License |
-| ----- |------| ---- |------|-------| ----- |  ----- |
-|  Magicoder-CL-7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-CL-7B" target="_blank">HF Link</a>   |  7B  |  60.4 (55.5)   | 64.2 (52.6) | -- |  [Llama2](https://ai.meta.com/llama/license/)  |
-|  Magicoder-*S*-CL-7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B" target="_blank">HF Link</a>   |  7B  |  70.7 (66.5)   | 68.4 (56.6) | -- |  [Llama2](https://ai.meta.com/llama/license/)  |
-|  Magicoder-DS-6.7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  66.5 (60.4)   | 75.4 (61.9) | -- |  [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL)  |
-|  Magicoder-*S*-DS-6.7B  |   🤗 <a href="https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B" target="_blank">HF Link</a>   |  6.7B  |  **76.8** (**70.7**)   | **75.7** (**64.4**) | -- |  [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL)  |
+| Model                 | Checkpoint                                                        | Size | HumanEval (+)       | MBPP (+)            | Demo | License                                                                           |
+|-----------------------|-------------------------------------------------------------------|------|---------------------|---------------------|------|-----------------------------------------------------------------------------------|
+| Magicoder-CL-7B       | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-CL-7B)     | 7B   | 60.4 (55.5)         | 64.2 (52.6)         | --   | [Llama2](https://ai.meta.com/llama/license/)                                      |
+| Magicoder-*S*-CL-7B   | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B)   | 7B   | 70.7 (66.5)         | 68.4 (56.6)         | --   | [Llama2](https://ai.meta.com/llama/license/)                                      |
+| Magicoder-DS-6.7B     | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B)   | 6.7B | 66.5 (60.4)         | 75.4 (61.9)         | --   | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
+| Magicoder-*S*-DS-6.7B | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) | 6.7B | **76.8** (**70.7**) | **75.7** (**64.4**) | --   | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
 
 ## 📑 Training Dataset
 
@@ -132,7 +133,7 @@ print(todo.get_tasks())  # Output: []
 
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
-## Generating Synthetic Data with OSS-Instruct
+<!-- ## Generating Synthetic Data with OSS-Instruct
 
 Make sure you have set up your `OPENAI_API_KEY` and optionally `OPENAI_BASE_URL`. Then run with
 
@@ -151,11 +152,13 @@ python src/magicoder/generate_data.py \
   --continue_from ${PATH_TO_DATA_FILE}
 ```
 
-## Fine-tuning over OSS-Instruct Datasets
+## Fine-tuning over OSS-Instruct Datasets -->
 
-> To be documented soon!
+## Details of Implementation and Development
 
-## Citation
+> To be documented soon! This includes a detailed implementation of OSS-Instruct and how each model variant is trained.
+
+## 📝 Citation
 
 ```bibtex
 @misc{magicoder,
@@ -170,6 +173,7 @@ python src/magicoder/generate_data.py \
 
 ## 🙏 Acknowledgements
 
-- [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder)
-- [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder)
-- [CodeLlama](https://ai.meta.com/research/publications/code-llama-open-foundation-models-for-code/)
+- [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder): Evol-Instruct
+- [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder): Base model for Magicoder-DS.
+- [CodeLlama](https://ai.meta.com/research/publications/code-llama-open-foundation-models-for-code/): Base model for Magicoder-CL.
+- [StarCoder](https://arxiv.org/abs/2305.06161): Data decontamination.
