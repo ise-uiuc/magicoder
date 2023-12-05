@@ -5,17 +5,12 @@
     <a href="https://opensource.org/license/mit/"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge">
     <a href="https://huggingface.co/ise-uiuc/"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-ise--uiuc-%23ff8811.svg?style=for-the-badge">
 </p>
-<!-- <a href="https://huggingface.co/ise-uiuc"><img src="https://huggingface.co/datasets/huggingface/badges/resolve/main/follow-me-on-HF-xl.svg"></a> -->
-
-<!--     <a href="https://hub.docker.com/r/universefly/repilot/tags"><img src="https://img.shields.io/badge/docker-universefly%2Frepilot-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"></a> -->
-
-<!-- [jw: add toc after the sections are ready] -->
 
 <p align="left">
-    🎩&nbsp;<a href="#-magicoder-models">Magicoder Models</a>
-    | 📑&nbsp;<a href="#-training-dataset">Training Dataset</a>
+    🎩&nbsp;<a href="#-models">Models</a>
+    | 📚&nbsp;<a href="#-dataset">Dataset</a>
     | 🚀&nbsp;<a href="#-quick-start">Quick Start</a>
-    | 👀&nbsp;<a href="#-inference-demo">Inference Demo</a>
+    | 👀&nbsp;<a href="#-demo">Demo</a>
     | 📝&nbsp;<a href="#-citation">Citation</a>
     | 🙏&nbsp;<a href="#-acknowledgements">Acknowledgements</a>
 </p>
@@ -30,7 +25,7 @@
 
 ![Overview of OSS-Instruct](assets/overview.svg)
 
-## 🎩 Magicoder Models
+## 🎩 Models
 
 | Model                 | Checkpoint                                                        | Size | HumanEval (+)       | MBPP (+)            | Demo | License                                                                           |
 |-----------------------|-------------------------------------------------------------------|------|---------------------|---------------------|------|-----------------------------------------------------------------------------------|
@@ -39,7 +34,7 @@
 | Magicoder-DS-6.7B     | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B)   | 6.7B | 66.5 (60.4)         | 75.4 (61.9)         | --   | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
 | Magicoder-*S*-DS-6.7B | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) | 6.7B | **76.8** (**70.7**) | **75.7** (**64.4**) | --   | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
 
-## 📑 Training Dataset
+## 📚 Dataset
 
 * [Magicoder-OSS-Instruct-75K](https://huggingface.co/datasets/ise-uiuc/Magicoder_oss_instruct_75k): generated through **OSS-Instruct** using `gpt-3.5-turbo-1106` and used to train both Magicoder and Magicoder-S series.
 * [Magicoder-Evol-Instruct-110K](https://huggingface.co/datasets/ise-uiuc/Magicoder_evol_instruct_110k): decontaminated and redistributed from [theblackcat102/evol-codealpaca-v1](https://huggingface.co/datasets/theblackcat102/evol-codealpaca-v1), used to further finetune Magicoder series and obtain Magicoder-S models.
@@ -129,7 +124,7 @@ print(todo.get_tasks())  # Output: []
 ```
 ``````
 
-## 👀 Inference Demo
+## 👀 Demo
 
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
@@ -174,6 +169,6 @@ python src/magicoder/generate_data.py \
 ## 🙏 Acknowledgements
 
 - [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder): Evol-Instruct
-- [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder): Base model for Magicoder-DS.
-- [CodeLlama](https://ai.meta.com/research/publications/code-llama-open-foundation-models-for-code/): Base model for Magicoder-CL.
-- [StarCoder](https://arxiv.org/abs/2305.06161): Data decontamination.
+- [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder): Base model for Magicoder-DS
+- [CodeLlama](https://ai.meta.com/research/publications/code-llama-open-foundation-models-for-code/): Base model for Magicoder-CL
+- [StarCoder](https://arxiv.org/abs/2305.06161): Data decontamination
