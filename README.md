@@ -12,12 +12,12 @@
 <!-- [jw: add toc after the sections are ready] -->
 
 <p align="left">
-    🎩 <a href="#-magicoder-models">Magicoder Models</a>
-    | 📑 <a href="#-training-dataset">Training Dataset</a>
-    | 🚀 <a href="#-quick-start">Quick Start</a>
-    | 👀 <a href="#-inference-demo">Inference Demo</a>
-    | 📝 <a href="#-citation">Citation</a>
-    | 🙏 <a href="#-acknowledgements">Acknowledgements</a>
+    🎩&nbsp;<a href="#-magicoder-models">Magicoder Models</a>
+    | 📑&nbsp;<a href="#-training-dataset">Training Dataset</a>
+    | 🚀&nbsp;<a href="#-quick-start">Quick Start</a>
+    | 👀&nbsp;<a href="#-inference-demo">Inference Demo</a>
+    | 📝&nbsp;<a href="#-citation">Citation</a>
+    | 🙏&nbsp;<a href="#-acknowledgements">Acknowledgements</a>
 </p>
 
 > [!IMPORTANT]
