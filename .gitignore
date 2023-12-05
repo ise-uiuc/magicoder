@@ -170,3 +170,4 @@ cython_debug/
 
 # Demo file
 flagged/
+*.sh
