@@ -126,6 +126,111 @@ print(todo.get_tasks())  # Output: []
 
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
+Here are some interesting examples showing **Magicoder**'s improvements over the base model:
+
+<details>
+<summary> <strong> Magicoder's Understanding Ability </strong> </summary>
+
+We create the following two examples by making two original HumanEval problems more complicated. While both **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base**, which is **Magicoder-*S*-DS-6.7B**'s base model, can solve the original HumanEval problem, only our **Magicoder-*S*-DS-6.7B** can solve the new complicated problems. 
+
+### Example 1
+Original Problem: 
+```
+Write a function to, given list of integers, return list in "strange" order. "Strange" sorting, is when you start with the minimum value, then maximum of the remaining integers, then minimum and so on.
+```
+
+New Problem:
+```
+Write a function to, given list of integers, return list in "ascending" order. "Ascending" sorting, is when you start with the minimum value, then maximum of the remaining integers, then minimum and so on.
+```
+
+This problem is challenging because we change the name of a new way (not ascending) to sort integers from "strange" to "ascending". The model should understand that the word "ascending" here has a new meaning based on both the context and the fact that it is surrounded by quotation marks. As is shown in the following responses to the new problem from two models, **Magicoder-*S*-DS-6.7B** successfully understands this complicated requirement, while **deepseek-coder-6.7b-base** is misled and sort integers in ascending order instead.
+
+Response to New Problem:
+```python
+# Magicoder-S-DS-6.7B (Correct)
+def ascending_sort(lst):
+    sorted_lst = []
+    while lst:
+        min_val = min(lst)
+        sorted_lst.append(min_val)
+        lst.remove(min_val)
+        if lst:
+            max_val = max(lst)
+            sorted_lst.append(max_val)
+            lst.remove(max_val)
+    return sorted_lst
+
+# deepseek-coder-6.7b-base (Wrong)
+def sort_ascending(lst):
+    lst.sort()       
+    return lst
+```
+
+### Example 2
+Original Problem: 
+```
+Write a function that takes an integer a and returns True if this ingeger is a cube of some integer number. Note: you may assume the input is always valid.
+```
+
+New Problem:
+```
+Write a function that takes an integer a and returns True if this ingeger is a cube of some integer number. Note: you should check whether the input is valid.
+```
+
+This problem is challenging because we ask the model to check the inputs' validity rather than assuming the input is always valid. While **Magicoder-*S*-DS-6.7B** successfully check the validity of the input, **deepseek-coder-6.7b-base** wrongly sets `a < 0` as the criterion of invalidity and thus fails to solve the problem.
+
+Response to New Problem:
+```python
+# Magicoder-S-DS-6.7B (Correct)
+def is_cube(a):
+    if not isinstance(a, int):
+        return False
+    if a < 0:
+        a = -a
+    return round(a ** (1. / 3)) ** 3 == a
+
+# deepseek-coder-6.7b-base (Wrong)
+def is_cube(a):
+    if a < 0:
+        return False
+    else:
+        for i in range(1, a):
+            if i**3 == a:
+                return True
+        return False
+```
+
+</details>
+
+
+
+<details>
+<summary> <strong> Magicoder's Ability to Use External Libraries </strong> </summary>
+
+We create the following example that requires models to use external libraries for the certain task. While our **Magicoder-*S*-DS-6.7B** successfully follows the instruction in the example, **deepseek-coder-6.7b-base**, which is **Magicoder-*S*-DS-6.7B**'s base model, tends to miss some requirements in the instruction.
+
+Prompt:
+```
+Write a gradio application for the following use case: Take an input image and return a 45 degree clockwise rotated image. You should also add text description under the output showing the rotation degree.
+```
+
+This instruction is challenging because our **Magicoder**'s fine-tuning dataset **does not** contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base** construct respectively:
+
+- **Magicoder-*S*-DS-6.7B**: **Correct!** As required in the instruction, it **adds the text description** under the output, and successfully performs the 45-degree rotation on the input image in the **clockwise** direction.
+
+Interface:
+![Magicoder](assets/magicoder-s-ds.png)
+
+
+- **Deepseek-coder-6.7b-base**: Wrong. Obviously, it **misses the text description** under the output. Even worse, it wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction.
+
+Interface:
+![deepseek-coder-6.7b-base](assets/ds-coder-base.png)
+
+</details>
+
+
 ## 📝 Citation
 
 ```bibtex
