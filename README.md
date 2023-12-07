@@ -220,14 +220,12 @@ This instruction is challenging because our **Magicoder**'s fine-tuning dataset 
 - **Magicoder-*S*-DS-6.7B**: **Correct!** It successfully performs the 45-degree rotation on the input image in the **clockwise** direction. As required in the instruction, it **adds the text description** under the output.
 
 Interface:
-
 ![Magicoder](assets/magicoder-s-ds.png)
 
 
-- **Deepseek-coder-6.7b-base**: Wrong. It also wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
+- **Deepseek-coder-6.7b-base**: Wrong. It wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
 
 Interface:
-
 ![deepseek-coder-6.7b-base](assets/ds-coder-base.png)
 
 </details>
