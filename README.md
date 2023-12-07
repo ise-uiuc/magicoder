@@ -126,7 +126,7 @@ print(todo.get_tasks())  # Output: []
 
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
-Here are some interesting examples showing **Magicoder**'s improvements over base models:
+Here are some interesting examples showing **Magicoder**'s improvements over the base model:
 
 <details>
 <summary> <strong> Magicoder's Understanding Ability </strong> </summary>
