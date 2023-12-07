@@ -217,13 +217,13 @@ Write a gradio application for the following use case: Take an input image and r
 
 This instruction is challenging because our **Magicoder**'s fine-tuning dataset **does not** contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base** construct respectively:
 
-- **Magicoder-*S*-DS-6.7B**: **Correct!** It successfully performs the 45-degree rotation on the input image in the **clockwise** direction. As required in the instruction, it **adds the text description** under the output.
+- **Magicoder-*S*-DS-6.7B**: **Correct!** As required in the instruction, it **adds the text description** under the output, and successfully performs the 45-degree rotation on the input image in the **clockwise** direction.
 
 Interface:
 ![Magicoder](assets/magicoder-s-ds.png)
 
 
-- **Deepseek-coder-6.7b-base**: Wrong. It wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
+- **Deepseek-coder-6.7b-base**: Wrong. Obviously, it **misses the text description** under the output. Even worse, it wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction.
 
 Interface:
 ![deepseek-coder-6.7b-base](assets/ds-coder-base.png)
