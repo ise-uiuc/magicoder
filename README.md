@@ -208,14 +208,14 @@ def is_cube(a):
 <details>
 <summary> <strong> Magicoder's Ability to Use External Libraries </strong> </summary>
 
-We create the following example that requires models to use external libraries for the certain task. While our **Magicoder-*S*-DS-6.7B** successfully follow the instruction in the example, both **deepseek-coder-6.7b-base** and **deepseek-coder-6.7b-instruct** tend to miss some requirements in the instruction.
+We create the following example that requires models to use external libraries for the certain task. While our **Magicoder-*S*-DS-6.7B** successfully follow the instruction in the example, **deepseek-coder-6.7b-base** tend to miss some requirements in the instruction.
 
 Prompt:
 ```
 Write a gradio application for the following use case: Take an input image and return a 45 degree clockwise rotated image. You should also add text description under the output showing the rotation degree.
 ```
 
-This instruction is challenging because our **Magicoder**'s fine-tuning dataset **does not** contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B**, **deepseek-coder-6.7b-instruct**, and **deepseek-coder-6.7b-base** construct respectively:
+This instruction is challenging because our **Magicoder**'s fine-tuning dataset **does not** contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base** construct respectively:
 
 - **Magicoder-*S*-DS-6.7B**: **Correct!** It successfully performs the 45-degree rotation on the input image in the **clockwise** direction. As required in the instruction, it **adds the text description** under the output.
 
@@ -223,11 +223,6 @@ Interface:
 
 ![Magicoder](assets/magicoder-s-ds.png)
 
-- **Deepseek-coder-6.7b-instruct**: Wrong. It wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. It also **adds the text description** under the output.
-
-Interface:
-
-![deepseek-coder-6.7b-instruct](assets/ds-coder-instruct.png)
 
 - **Deepseek-coder-6.7b-base**: Wrong. It also wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
 
