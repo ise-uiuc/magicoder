@@ -36,7 +36,7 @@ Here are some descriptions for the `experiments/data_embedding` directory:
       
     - In the **query** mode,  the model will generate the corresponding embeddings according to the instructions and queries you give,  then classifies them by calculating the cosine similarity between the embeddings of the data file and the embeddings of queries.
       
-      You can change the clustering criteria by adjusting the `--query_instruction` and `--queries`.
+      You can change the classification criteria by adjusting the `--query_instruction` and `--queries`.
       
       For example, if you want to classify the data file according to the topic of the content, you can run the command:
       
