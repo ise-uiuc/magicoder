@@ -142,7 +142,7 @@ New Problem:
 
 - Write a function to, given list of integers, return list in **"ascending"** order. **"Ascending"** sorting, is when you start with the minimum value, then maximum of the remaining integers, then minimum and so on.
 
-This problem is challenging because we change the name of a new way, which is not the ascending order, to sort integers from "strange" to "ascending". The model should understand that the word "ascending" here has a new meaning based on both the context and the fact that it is surrounded by quotation marks. As is shown in the following responses to the new problem from two models, **Magicoder-*S*-DS-6.7B** successfully understands this complicated requirement, while **deepseek-coder-6.7b-base** is misled and sort integers in ascending order instead.
+This problem is challenging because we change the name of a new way, which is **not** the ascending order, to sort integers from "strange" to "ascending". The model should understand that the word "ascending" here has a new meaning based on both the context and the fact that it is surrounded by quotation marks. As is shown in the following responses to the new problem from two models, **Magicoder-*S*-DS-6.7B** successfully understands this complicated requirement, while **deepseek-coder-6.7b-base** is misled and sort integers in ascending order instead.
 
 Response to New Problem:
 ```python
