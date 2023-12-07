@@ -131,7 +131,7 @@ Here are some interesting examples showing **Magicoder**'s improvements over the
 <details>
 <summary> <strong> Magicoder's Understanding Ability </strong> </summary>
 
-We create the following two examples by making two original HumanEval problems more complicated. While both **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base**, which is **Magicoder**'s base model, can solve the original HumanEval problem, only our **Magicoder-*S*-DS-6.7B** can solve the new complicated problems. 
+We create the following two examples by making two original HumanEval problems more complicated. While both **Magicoder-*S*-DS-6.7B** and **deepseek-coder-6.7b-base**, which is **Magicoder-*S*-DS-6.7B**'s base model, can solve the original HumanEval problem, only our **Magicoder-*S*-DS-6.7B** can solve the new complicated problems. 
 
 ### Example 1
 Original Problem: 
@@ -208,7 +208,7 @@ def is_cube(a):
 <details>
 <summary> <strong> Magicoder's Ability to Use External Libraries </strong> </summary>
 
-We create the following example that requires models to use external libraries for the certain task. While our **Magicoder-*S*-DS-6.7B** successfully follow the instruction in the example, **deepseek-coder-6.7b-base** tend to miss some requirements in the instruction.
+We create the following example that requires models to use external libraries for the certain task. While our **Magicoder-*S*-DS-6.7B** successfully follows the instruction in the example, **deepseek-coder-6.7b-base**, which is **Magicoder-*S*-DS-6.7B**'s base model, tends to miss some requirements in the instruction.
 
 Prompt:
 ```
