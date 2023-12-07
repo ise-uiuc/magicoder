@@ -1,5 +1,5 @@
 ### 📚Description
-Here are some descriptions for the `data_embedding` directory:
+Here are some descriptions for the `experiments/data_embedding` directory:
 - `length.py`: provides the token length distribution for data file problems and solutions.
 - `cosine_similarity.py`: computes the cosine similarity between the TF-IDF embeddings of data file and HumanEval.
 - `instruction_embedding.py`:  classifies and calculates the percentage composition of data within the data file based on the instruction you provide.
