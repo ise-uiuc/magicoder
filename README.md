@@ -215,19 +215,19 @@ Prompt:
 Write a gradio application for the following use case: Take an input image and return a 45 degree clockwise rotated image. You should also add text description under the output showing the rotation degree.
 ```
 
-This instruction is challenging because our **Magicoder**'s training dataset does not contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B**, **deepseek-coder-6.7b-instruct**, and **deepseek-coder-6.7b-base** construct respectively:
+This instruction is challenging because our **Magicoder**'s training dataset **does not** contain the library "gradio" that is necessary for this task. Here are the gradio applications that **Magicoder-*S*-DS-6.7B**, **deepseek-coder-6.7b-instruct**, and **deepseek-coder-6.7b-base** construct respectively:
 
-**Magicoder-*S*-DS-6.7B**: **Correct!**
+- **Magicoder-*S*-DS-6.7B**: **Correct!** **Magicoder-*S*-DS-6.7B** successfully performs the 45-degree rotation on the input image in the **clockwise** direction. As required in the instruction, it **adds the text description** under the output.
+
 ![Magicoder](assets/magicoder-s-ds.png)
-**Magicoder-*S*-DS-6.7B** successfully performs the 45-degree rotation on the input image in the **clockwise** direction. As required in the instruction, it **adds the text description** under the output.
 
-**Deepseek-coder-6.7b-instruct**: Wrong...
+- **Deepseek-coder-6.7b-instruct**: Wrong. **Deepseek-coder-6.7b-instruct** wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. It also **adds the text description** under the output.
+
 ![deepseek-coder-6.7b-instruct](assets/ds-coder-instruct.png)
-**Deepseek-coder-6.7b-instruct** wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. It also **adds the text description** under the output.
 
-**Deepseek-coder-6.7b-base**: Wrong...
+- **Deepseek-coder-6.7b-base**: Wrong. **Deepseek-coder-6.7b-base** also wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
+
 ![deepseek-coder-6.7b-base](assets/ds-coder-base.png)
-**Deepseek-coder-6.7b-base** also wrongly performs the 45-degree rotation on the input image in the **counterclockwise** direction. Even worse, it **misses the text description** under the output.
 
 </details>
 
