@@ -32,14 +32,27 @@
 
 ## 🎩 Models
 
-| Model                 | Checkpoint                                                        | Size | HumanEval (+)       | MBPP (+)            | Demo | License                                                                           |
-|-----------------------|-------------------------------------------------------------------|------|---------------------|---------------------|------|-----------------------------------------------------------------------------------|
-| Magicoder-CL-7B       | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-CL-7B)     | 7B   | 60.4 (55.5)         | 64.2 (52.6)         | --   | [Llama2](https://ai.meta.com/llama/license/)                                      |
-| Magicoder-*S*-CL-7B   | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B)   | 7B   | 70.7 (66.5)         | 68.4 (56.6)         | --   | [Llama2](https://ai.meta.com/llama/license/)                                      |
-| Magicoder-DS-6.7B     | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B)   | 6.7B | 66.5 (60.4)         | 75.4 (61.9)         | --   | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
-| Magicoder-*S*-DS-6.7B | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) | 6.7B | **76.8** (**70.7**) | **75.7** (**64.4**) | [Demo](https://67cc8c194b67d37b94.gradio.live)*  | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
+| Model                 | Checkpoint                                                        | Size | HumanEval (+)       | MBPP (+)            | License                                                                           |
+|-----------------------|-------------------------------------------------------------------|------|---------------------|---------------------|-----------------------------------------------------------------------------------|
+| Magicoder-CL-7B       | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-CL-7B)     | 7B   | 60.4 (55.5)         | 64.2 (52.6)         | [Llama2](https://ai.meta.com/llama/license/)                                      |
+| Magicoder-*S*-CL-7B   | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B)   | 7B   | 70.7 (66.5)         | 68.4 (56.6)         | [Llama2](https://ai.meta.com/llama/license/)                                      |
+| Magicoder-DS-6.7B     | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-DS-6.7B)   | 6.7B | 66.5 (60.4)         | 75.4 (61.9)         | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
+| Magicoder-*S*-DS-6.7B | 🤗 [HF Link](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) | 6.7B | **76.8** (**70.7**) | **75.7** (**64.4**) | [DeepSeek](https://github.com/deepseek-ai/DeepSeek-Coder/blob/main/LICENSE-MODEL) |
 
-<sub>*Demo link will expire on 12/8/2023.</sub>
+## 👀 Demo
+
+### Online Gradio Demo
+Try our [Magicoder-Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B) quickly. Huge thanks to [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and huggingface team for their support!
+
+### Local Gradio Demo
+We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the [script](demo/magicoder_demo.py) to build a local demo server. You can launch your local gradio demo as following:
+```bash
+cd demo
+CUDA_VISIBLE_DEVICES=0 python magicoder_demo.py \
+   --base_model "ise-uiuc/Magicoder-S-DS-6.7B" \
+   --device "cuda:0" \
+   --port 8080
+```
 
 ## 📚 Dataset
 
@@ -125,10 +138,6 @@ todo.clear_list()
 print(todo.get_tasks())  # Output: []
 ```
 ``````
-
-## 👀 Demo
-
-We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the script to build a local demo server with [gradio](https://www.gradio.app). Refer to [/demo](demo/README.md) for more information.
 
 ## 📝 Citation
 
