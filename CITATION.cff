@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this work and love it, consider citing it as below \U0001F917"
+title: Magicoder
+authors:
+  - family-names: Magicoder Team
+url: https://github.com/ise-uiuc/magicoder
+doi: https://doi.org/10.48550/arXiv.2312.02120
+date-released: 2023-05-01
+license: MIT
+preferred-citation:
+  type: article
+  title: "Magicoder: Source Code Is All You Need"
+  authors:
+    - family-names: Wei
+      given-names: Yuxiang
+    - family-names: Wang
+      given-names: Zhe
+    - family-names: Liu
+      given-names: Jiawei
+    - family-names: Ding
+      given-names: Yifeng
+    - family-names: Zhang
+      given-names: Lingming
+  year: 2023
+  journal: "arXiv preprint arXiv:2312.02120"
+  doi: https://doi.org/10.48550/arXiv.2312.02120
+  url: https://arxiv.org/abs/2312.02120
