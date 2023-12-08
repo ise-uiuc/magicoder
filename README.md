@@ -42,7 +42,7 @@
 ## 👀 Demo
 
 ### Online Gradio Demo
-Try our [Magicoder-Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B) quickly. Huge thanks to [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and huggingface team for their support!
+Try our [Magicoder Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B) quickly. Huge thanks to [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and huggingface team for their support!
 
 ### Local Gradio Demo
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the [script](demo/magicoder_demo.py) to build a local demo server. You can launch your local gradio demo as following:
