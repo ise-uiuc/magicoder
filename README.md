@@ -42,10 +42,12 @@
 ## 👀 Demo
 
 ### Online Gradio Demo
-Try our [Magicoder Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B) quickly. Huge thanks to [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and huggingface team for their support!
+Quickly try out our [Magicoder Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B) powered by [gradio](https://www.gradio.app)! Huge thanks to [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and the Hugging&nbsp;Face team for their support!
 
 ### Local Gradio Demo
+
 We follow [WizardCoder](https://github.com/nlpxucan/WizardLM/blob/main/demo/wizardLM_demo.py) and provide the [script](demo/magicoder_demo.py) to build a local demo server. You can launch your local gradio demo as following:
+
 ```bash
 cd demo
 CUDA_VISIBLE_DEVICES=0 python magicoder_demo.py \
@@ -153,6 +155,9 @@ print(todo.get_tasks())  # Output: []
 ```
 
 ## 🙏 Acknowledgements
+
+We thank [AK(@_akhaliq)](https://twitter.com/_akhaliq?lang=en) and the Hugging&nbsp;Face team for their support in the [Magicoder Playground](https://huggingface.co/spaces/ise-uiuc/Magicoder-S-DS-6.7B)!
+We also thank the following amazing projects that truly inspired us:
 
 - [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder): Evol-Instruct
 - [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder): Base model for Magicoder-DS
