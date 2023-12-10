@@ -17,7 +17,7 @@
 </p>
 
 > [!IMPORTANT]
-> We are keeping improving the documents and adding more implementation details. Please stay tuned!
+> We are keeping improving the documents and adding more implementation details. Please stay tuned at [README-DEV.md](README-DEV.md) for more information.
 
 ## About
 
