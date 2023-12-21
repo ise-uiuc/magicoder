@@ -11,6 +11,7 @@ dependencies = [
     "datasets>=2.14.6",
     "numpy>=1.26.1",
     "sentence-transformers>=2.2.2",
+    "tenacity>=8.2.3",
 ]
 description = "Self-instruct powered by seed code snippets from the wild"
 license = {text = "MIT"}
@@ -19,12 +20,6 @@ readme = "README.md"
 requires-python = ">=3.10,<3.13"
 version = "0.1.0"
 
-[project.optional-dependencies]
-flash-attn = [
-    "packaging>=23.2",
-    "flash-attn>=2.3.5",
-    "wheel>=0.42.0",
-]
 [build-system]
 build-backend = "pdm.backend"
 requires = ["pdm-backend"]
@@ -39,12 +34,9 @@ dev = [
     "matplotlib>=3.8.1",
     "InstructorEmbedding>=1.0.1",
     "joblib>=1.3.2",
-    "-e file:///${PROJECT_ROOT}/../evalplus#egg=evalplus",
-    "-e file:///${PROJECT_ROOT}/../bigcode-evaluation-harness#egg=bigcode-eval",
     "termcolor>=2.3.0",
-    "treelib>=1.7.0",
-    "tree-sitter>=0.20.4",
-    "black>=23.11.0",
+    "evalplus @ git+https://github.com/evalplus/evalplus@1895d2f6aa8895044a7cf69defc24bd57695e885",
+    "bigcode-eval @ git+https://github.com/bigcode-project/bigcode-evaluation-harness@be2a44c2faa29c20b5041d7083acb698eb373309",
 ]
 test = [
   "pytest>=7.4.3",
