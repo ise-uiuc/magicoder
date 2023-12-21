@@ -14,7 +14,27 @@ import magicoder
 
 # DO NOT CHANGE THE FOLLOWING
 ERROR_MARGIN = 10
-NUM_WORDS_CHOICES = ["0--100", "100--400", "400--800"]
+WORD_LIMIT_CHOICES = [50, 100, 150, 200, 250, 300, None]
+TONES = [
+    x + y
+    for x in [
+        "a formal",
+        "a usual",
+        "a neutral",
+        "an instructional",
+        "a questioning",
+        "a narrative",
+        "a reflective",
+        "a conversational",
+        "a guiding",
+    ]
+    for y in [
+        " and first-person (I, me, my, mine)",
+        "",
+    ]
+]
+
+WORD_LIMIT_PRMOPT = "- The prompt should contain no more than {word_limit} words.\n"
 
 
 @dataclass(frozen=True)
@@ -30,7 +50,7 @@ class Args:
     # Keep the following arguments unchanged for reproducibility
     seed: int = field(default=976)
 
-    temperature: float = field(default=0.7)
+    temperature: float = field(default=0.0)
     model: str = field(default="gpt-3.5-turbo-1106")
     model_max_tokens: int = field(default=8192)
     max_new_tokens: int = field(default=2500)
@@ -60,18 +80,57 @@ class Args:
             sys_prompt,
             user_prompt,
             ERROR_MARGIN,
-            NUM_WORDS_CHOICES,
+            WORD_LIMIT_CHOICES,
+            WORD_LIMIT_PRMOPT,
+            TONES,
         )
         return magicoder.utils.compute_fingerprint(*args, hash_length=5)
 
 
-def parse_instruction(response_text: str) -> str | None:
-    response_text = response_text.strip()
-    while response_text[:3] in ["```", "'''", '"""']:
-        response_text = response_text[3:]
-    while response_text[-3:] in ["```", "'''", '"""']:
-        response_text = response_text[:-3]
-    return response_text.strip()
+def parse_response(response_text: str) -> tuple[str, str] | None:
+    """Parse a JSON block followed by a text block enclosed in tripple quotes."""
+    if response_text.count('"""') == 0 and response_text.count("'''") != 0:
+        response_text = response_text.replace("'''", '"""')
+
+    index_0 = response_text.find('"""')
+    index_1 = response_text.find("```")
+    if index_0 == -1 and index_1 == -1:
+        return None
+    if index_0 == -1:
+        json_considered_delim = "```"
+    elif index_1 == -1:
+        json_considered_delim = '"""'
+    elif index_0 < index_1:
+        json_considered_delim = '"""'
+    else:
+        json_considered_delim = "```"
+    try:
+        json_start = response_text.index(json_considered_delim) + len(
+            json_considered_delim
+        )
+        json_end = response_text.index(json_considered_delim, json_start)
+        if response_text.startswith("json", json_start):
+            json_start = json_start + 4
+        attributes_text = response_text[json_start:json_end].strip()
+    except ValueError:
+        return None
+    response_text = response_text[json_end + 3 :]
+    for delim in ['"""', "```"]:
+        try:
+            triple_quotes_start = response_text.index(delim) + len(delim)
+            triple_quotes_end = response_text.rindex(delim, triple_quotes_start)
+            if delim != '"""' and len(response_text) - triple_quotes_end > 50:
+                triple_quotes_end = len(response_text)
+            instruction = response_text[triple_quotes_start:triple_quotes_end]
+            if len(instruction) == 0:
+                return None
+            index = instruction.find("\n")
+            if index != -1 and index < 10:
+                instruction = instruction[index + 1 :]
+            return attributes_text, instruction.strip()
+        except ValueError:
+            pass
+    return None
 
 
 async def main():
@@ -129,20 +188,30 @@ async def main():
     for chunk_index, examples in enumerate(pbar):
         # map to the index in the original seed snippets
         effective_index = chunk_index * args.rpm + start_index + n_skipped
+        print("Effective index:", effective_index)
         if chunk_index > 0 and args.rpm != 1:
             print("Sleeping for 60 seconds...")
             time.sleep(60)
         # assert index + start_index == example["index"]
         request_params = list[dict[str, Any]]()
-        attr_num_words: list[str] = []
+        attr_tones: list[str] = []
+        attr_word_limits: list[int | None] = []
         for index, example in enumerate(examples):
             seed = args.seed + effective_index + index
             random.seed(seed)
-            num_words = random.choice(NUM_WORDS_CHOICES)
-            attr_num_words.append(num_words)
+            tone = random.choice(TONES)
+            word_limit = random.choice(WORD_LIMIT_CHOICES)
+            attr_tones.append(tone)
+            attr_word_limits.append(word_limit)
             sys_prompt = sys_prompt_template
+            if word_limit is not None:
+                word_limit_prompt = WORD_LIMIT_PRMOPT.format(word_limit=word_limit)
+            else:
+                word_limit_prompt = ""
             user_prompt = user_prompt_template.format(
-                fragments=example["seed"], num_words=num_words
+                fragments=example["seed"],
+                tone=tone,
+                word_limit_prompt=word_limit_prompt,
             )
             messages = [
                 {"role": "system", "content": sys_prompt},
@@ -175,7 +244,9 @@ async def main():
             request_params, delay=args.delay
         )
         assert len(examples) == len(responses)
-        for num_words, example, response in zip(attr_num_words, examples, responses):
+        for word_limit, tone, example, response in zip(
+            attr_word_limits, attr_tones, examples, responses
+        ):
             if isinstance(response, BaseException):
                 print("Exception when generating response:", response)
                 continue
@@ -183,13 +254,19 @@ async def main():
             if choice.finish_reason != "stop":
                 print("Failed to generate a complete response")
                 continue
-            instruction = parse_instruction(choice.message.content)
-            if instruction is None:
+            parsing_result = parse_response(choice.message.content)
+            # if parsing_result is not None:
+            #     print(parsing_result[0])
+            #     print(parsing_result[1])
+            # breakpoint()
+            if parsing_result is None:
                 continue
+            attributes_text, instruction = parsing_result
             fingerprint = response.system_fingerprint
             assert fingerprint is not None
             data = dict(
-                num_words=num_words,
+                tone=tone,
+                attributes=attributes_text,
                 instruction=instruction,
                 openai_fingerprint=fingerprint,
                 **example,
@@ -198,8 +275,12 @@ async def main():
             print(
                 "[Seed]",
                 example["seed"],
-                "[Num Words]",
-                num_words,
+                "[Tone]",
+                tone,
+                "[Attributes]",
+                attributes_text,
+                "[Words]",
+                word_limit,
                 "[Instruction]",
                 instruction,
                 sep="\n",

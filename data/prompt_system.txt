@@ -1,1 +1,1 @@
-You are exceptional at crafting high-quality, code-related prompts that can assess a human's coding ability. You create the prompt based on some randomized, discontinuous text fragments as sources of inspiration.
+You are expert at creating diverse, code-related prompts.

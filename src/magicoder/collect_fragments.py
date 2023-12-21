@@ -51,9 +51,7 @@ class Args:
 
 
 def fragments_to_text(fragments: list[str]) -> str:
-    return "".join(
-        f"<fragment {i + 1}>\n" + fragment for i, fragment in enumerate(fragments)
-    ).strip()
+    return "...\n".join(fragments)
 
 
 def map_dataset(examples: dict, indices: list[int], args: Args) -> dict:
@@ -122,7 +120,7 @@ def extract_fragments(args: Args, document: str) -> list[str] | None:
         "".join(lines[i : i + size])
         for i, size in zip(fragment_indices, fragment_sizes)
     ]
-    random.shuffle(fragments)
+    # random.shuffle(fragments)
     return fragments
 
 
@@ -148,6 +146,7 @@ def main():
         batched=True,
         batch_size=args.chunk_size,
         remove_columns=dataset.column_names,
+        load_from_cache_file=False,
     )
     dataset = dataset.shuffle(seed=args.seed)
 

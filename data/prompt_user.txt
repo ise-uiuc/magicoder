@@ -1,11 +1,18 @@
-Here are the randomized, discontinuous text fragments for inspiration:
+Use the following to inspire your prompt creation (avoid using the exact same text):
 """
 {fragments}
 """
-The contents of your prompt should be relevant to the fragments, but should not copy their details.
+The text should guide the attributes of your prompt, such as:
+- Programming language: the language(s) used in the prompt
+- Coding aspects: the specific aspect of coding that the prompt targets (e.g., algorithmic thinking, debugging, code optimization, readability, data manipulation, application/library development, etc.)
+- Problem domain: the specific field or domain to which the coding problem relates
+Feel free to create new attributes and enrich the attribute values as needed.
 
-Here are the requirements of the prompt you should create:
-1. The prompt should contain {num_words} words
-2. Ensure the prompt is self-contained and reasonable.
+Additional requirements that you must follow when creating the prompt:
+{word_limit_prompt}- Present the prompt in {tone} tone.
+- Ensure the prompt is reasonable. Do not reference any external context beyond common programming knowledge.
+- Any specific context, variables, or code snippets pertinent to this problem **must be** explicitly included.
+- Don't make any references to "the given contents", "the given code", "the code snippet" without explicitly writing them in the prompt.
 
-Please reply with only the created prompt, without any further explanations. Enclose it in triple quotes (""").
+Response Format:
+Please provide your response in two sections. First, list the attributes and their values in JSON format enclosed in triple quotes ("""). Then, enclose the prompt within triple quotes (""").
