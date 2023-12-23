@@ -12,6 +12,7 @@ dependencies = [
     "numpy>=1.26.1",
     "sentence-transformers>=2.2.2",
     "tenacity>=8.2.3",
+    "langdetect>=1.0.9",
 ]
 description = "Self-instruct powered by seed code snippets from the wild"
 license = {text = "MIT"}

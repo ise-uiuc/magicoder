@@ -19,8 +19,8 @@ SYSTEM_PROMPT = "You are exceptionally skilled at coding. You consistently deliv
 @dataclass(frozen=True)
 class Args:
     data_files: list[str] = field(metadata={"help": "Path to the seed code snippets"})
-    start_index: int
     max_new_data: int
+    start_index: int = field(default=0)
     continue_from: str | None = field(default=None)
 
     # Keep the following arguments unchanged for reproducibility
@@ -81,18 +81,18 @@ async def main():
         assert (
             data_fingerprint in args.continue_from
         ), f"Fingerprint mismatch: {data_fingerprint}"
+        assert f"-{start_index}-" in args.continue_from, "Index mismatch"
         old_path = Path(args.continue_from)
         assert old_path.exists()
         old_data = magicoder.utils.read_jsonl(old_path)
         assert len(old_data) > 0
-        last_instruction = old_data[-1]["instruction"]
-        # Find instruction
-        instruction_index = next(
-            idx for idx, d in enumerate(dataset) if d["instruction"] == last_instruction
+        last_seed = old_data[-1]["seed"]
+        seed_index = next(
+            idx for idx, d in enumerate(dataset) if d["seed"] == last_seed
         )
-        n_skipped = instruction_index - start_index + 1
+        n_skipped = seed_index + 1
         # n_skipped = last_index - start_index + 1
-        print("Continuing from", old_path)
+        print(f"Continuing from {old_path} with {n_skipped} seed snippets skipped")
         f_out = old_path.open("a")
     else:
         tag = "" if args.tag == "" else f"-{args.tag}"
@@ -167,7 +167,7 @@ async def main():
 
             print(
                 "[Instruction]",
-                instruction,
+                example["instruction"],
                 "[Response]",
                 output,
                 sep="\n",

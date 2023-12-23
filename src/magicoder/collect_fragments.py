@@ -1,5 +1,6 @@
 import json
 import random
+import textwrap
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import cast
@@ -34,10 +35,11 @@ class Args:
             "help": "Custom tag as part of the output filename, not affecting the fingerprint"
         },
     )
+    text_wrap: int | None = field(default=None)
 
     def fingerprint(self) -> str:
         # The combination of arguments can uniquely determine the generation process
-        args = (
+        args = [
             self.seed,
             self.min_lines,
             self.max_lines,
@@ -46,7 +48,10 @@ class Args:
             self.dataset_name,
             self.data_dir,
             self.max_considered_data,
-        )
+        ]
+        # for backward compatibility, only add if needed
+        if self.text_wrap is not None:
+            args.append(self.text_wrap)
         return magicoder.utils.compute_fingerprint(*args, hash_length=5)
 
 
@@ -87,6 +92,16 @@ def uniform_partition_positive(n: int, k: int) -> list[int]:
     return [x + 1 for x in uniform_partition(n - k, k)]
 
 
+def is_en(content: str, seed: int) -> bool:
+    import langdetect
+
+    langdetect.DetectorFactory.seed = seed
+    try:
+        return langdetect.detect(content) == "en"
+    except langdetect.lang_detect_exception.LangDetectException:
+        return False
+
+
 def place_blocks(n: int, sizes: list[int]) -> list[int]:
     """Randomly place k blocks of sizes `sizes` in a line of length n. Return the starting positions."""
     assert n >= 0, "n should be >= 0"
@@ -105,8 +120,36 @@ def place_blocks(n: int, sizes: list[int]) -> list[int]:
 
 
 def extract_fragments(args: Args, document: str) -> list[str] | None:
+    if args.text_wrap is not None:
+        document = textwrap.fill(
+            document,
+            width=args.text_wrap,
+            replace_whitespace=False,
+            expand_tabs=False,
+            break_on_hyphens=False,
+            drop_whitespace=False,
+            break_long_words=False,
+        )
+    if args.data_dir == "markdown" and not is_en(document, args.seed):
+        return None
     lines = document.splitlines(keepends=True)
+
+    # special rules
+    if args.data_dir == "jupyter-scripts-dedup-filtered":
+        lines = [
+            line
+            for line in lines
+            if "jupyter" not in line.lower() and "jupytext" not in line.lower()
+        ]
+    elif args.data_dir == "markdown":
+        lines = [
+            line
+            for line in lines
+            if "http:" not in line and "https:" not in line and "www." not in line
+        ]
+
     lines = [line for line in lines if line.strip() != ""]
+
     if len(lines) < args.min_lines or len(lines) == 0:
         return None
     max_lines = min(args.max_lines, len(lines))
@@ -139,11 +182,13 @@ def main():
     )
     random.seed(args.seed)
     # map_fn = get_map_dataset(args)
+    num_proc = magicoder.utils.N_CORES if args.data_dir == "markdown" else None
     dataset = dataset.map(
         function=map_dataset,
         fn_kwargs=dict(args=args),
         with_indices=True,
         batched=True,
+        num_proc=num_proc,
         batch_size=args.chunk_size,
         remove_columns=dataset.column_names,
         load_from_cache_file=False,

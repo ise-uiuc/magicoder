@@ -14,7 +14,7 @@ import magicoder
 
 # DO NOT CHANGE THE FOLLOWING
 ERROR_MARGIN = 10
-WORD_LIMIT_CHOICES = [50, 100, 150, 200, 250, 300, None]
+WORD_LIMIT_CHOICES = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, None]
 TONES = [
     x + y
     for x in [
@@ -42,15 +42,15 @@ class Args:
     seed_data_files: list[str] = field(
         metadata={"help": "Path to the seed code snippets"}
     )
-    seed_code_start_index: int
     # `seed_code_start_index` + `max_new_data` is the last-to-end seed code index
     max_new_data: int
+    seed_code_start_index: int = field(default=0)
     continue_from: str | None = field(default=None)
 
     # Keep the following arguments unchanged for reproducibility
     seed: int = field(default=976)
 
-    temperature: float = field(default=0.0)
+    temperature: float = field(default=1.0)
     model: str = field(default="gpt-3.5-turbo-1106")
     model_max_tokens: int = field(default=8192)
     max_new_tokens: int = field(default=2500)
@@ -170,9 +170,9 @@ async def main():
         seed_index = next(
             idx for idx, d in enumerate(dataset) if d["seed"] == last_seed
         )
-        n_skipped = seed_index - start_index + 1
+        n_skipped = seed_index + 1
         # n_skipped = last_index - start_index + 1
-        print("Continuing from", old_path)
+        print(f"Continuing from {old_path} with {n_skipped} seed snippets skipped")
         f_out = old_path.open("a")
     else:
         tag = "" if args.tag == "" else f"-{args.tag}"
@@ -266,6 +266,7 @@ async def main():
             assert fingerprint is not None
             data = dict(
                 tone=tone,
+                word_limit=word_limit,
                 attributes=attributes_text,
                 instruction=instruction,
                 openai_fingerprint=fingerprint,
