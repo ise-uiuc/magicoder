@@ -13,9 +13,9 @@ dependencies = [
     "sentence-transformers>=2.2.2",
     "tenacity>=8.2.3",
 ]
-description = "Self-instruct powered by seed code snippets from the wild"
+description = "Magicoder: Source Code Is All You Need"
 license = {text = "MIT"}
-name = "magicoder"
+name = "Magicoder"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 version = "0.1.0"
