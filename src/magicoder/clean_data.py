@@ -31,31 +31,48 @@ class Args:
     seed: int = field(default=666)
 
 
-def filter_same_seed_problem_solution(
+def filter_data(
     raw_data: list[dict],
 ) -> tuple[list[dict], list[dict]]:
     chosen_data: list[dict] = []
     seeds: set[str] = set()
-    problems: set[str] = set()
-    solutions: set[str] = set()
+    # problems: set[str] = set()
+    # solutions: set[str] = set()
     rejected_data: list[dict] = []
-    for d in tqdm(raw_data, desc="Filtering same seed, problem, and solution"):
+
+    def is_valid(d: dict) -> bool:
+        instruction = d["instruction"].lower()
+        response = d["response"].lower()
+        instruction_words = [
+            "in the provided",
+            "the given code",
+            "the given snippet",
+            "the provided code",
+            "the provided snippet",
+            "the given content",
+            "the provided content",
+            "the given text",
+            "the provided text",
+            "given the code snippet",
+        ]
+        response_words = ["i'm sorry", "openai", "please provide"]
+        is_invalid = (
+            any(word in instruction for word in instruction_words)
+            and "```" not in instruction
+        ) or any(word in response for word in response_words)
+        return not is_invalid
+
+    for d in tqdm(raw_data, desc="Filtering invalid instructions"):
         seed = remove_all_whitespaces(d["seed"])
-        problem = remove_all_whitespaces(d["problem"])
-        solution = remove_all_whitespaces(d["solution"])
-        if seed not in seeds and problem not in problems and solution not in solutions:
+        # problem = remove_all_whitespaces(d["problem"])
+        # solution = remove_all_whitespaces(d["solution"])
+        if seed not in seeds and is_valid(d):
             chosen_data.append(d)
             seeds.add(seed)
-            problems.add(problem)
-            solutions.add(solution)
+            # problems.add(problem)
+            # solutions.add(solution)
         else:
-            reason = (
-                "duplicate seeds"
-                if seed in seeds
-                else "duplicate problems"
-                if problem in problems
-                else "duplicate solutions"
-            )
+            reason = "duplicate seeds" if seed in seeds else "invalid instruction"
             rejected_data.append(dict(reason=reason, **d))
     return chosen_data, rejected_data
 
@@ -97,17 +114,17 @@ def filter_same_codeblocks(raw_data: list[dict]) -> tuple[list[dict], list[dict]
     return chosen_data, rejected_data
 
 
-ALL_LANGS = [
-    "python",
-    "typescript",
-    "csharp",
-    "rust",
-    "swift",
-    "php",
-    "java",
-    "cpp",
-    "shell",
-]
+# ALL_LANGS = [
+#     "python",
+#     "typescript",
+#     "csharp",
+#     "rust",
+#     "swift",
+#     "php",
+#     "java",
+#     "cpp",
+#     "shell",
+# ]
 
 
 def save_analysis(chosen_data: list[dict], rejected_data: list[dict], output_dir: Path):
@@ -176,9 +193,10 @@ def main():
     raw_data: list[dict] = []
     for data_file in args.data_files:
         data = read_jsonl(Path(data_file))
-        language = data_file.split("-")[1]
-        assert language in ALL_LANGS, f"Unknown language {language}"
-        raw_data.extend(dict(lang=language, **d) for d in data)
+        # language = data_file.split("-")[1]
+        # assert language in ALL_LANGS, f"Unknown language {language}"
+        # raw_data.extend(dict(lang=language, **d) for d in data)
+        raw_data.extend(data)
     random.seed(args.seed)
     random.shuffle(raw_data)
 
@@ -188,23 +206,29 @@ def main():
         return
 
     chosen_data = raw_data
-    chosen_data, rejected_data_1 = filter_same_seed_problem_solution(chosen_data)
+    chosen_data, rejected_data_1 = filter_data(chosen_data)
     print(f"After filtering: {len(raw_data)} -> {(n_last := len(chosen_data))}")
 
-    warnings.warn(
-        "In practice, filtering data whose solution copies the problem does not help much."
-        "So we disabled it. But this conclusion remains to be verified."
-    )
+    # for d in rejected_data_1:
+    #     print("[INSTRUCTION]")
+    #     print(d["instruction"])
+    #     print("[RESPONSE]")
+    #     print(d["response"])
+    #     input()
+    # warnings.warn(
+    #     "In practice, filtering data whose solution copies the problem does not help much."
+    #     "So we disabled it. But this conclusion remains to be verified."
+    # )
     # chosen_data, rejected_data_2 = filter_same_codeblocks(chosen_data)
     # print(f"After filtering: {n_last} -> {(n_last := len(chosen_data))}")
     write_jsonl(Path(args.output_file), chosen_data)
-    if args.analysis_dir is not None:
-        print("Saving analysis..")
-        save_analysis(
-            chosen_data,
-            rejected_data_1,  # + rejected_data_2,
-            Path(args.analysis_dir),
-        )
+    # if args.analysis_dir is not None:
+    #     print("Saving analysis..")
+    #     save_analysis(
+    #         chosen_data,
+    #         rejected_data_1,  # + rejected_data_2,
+    #         Path(args.analysis_dir),
+    #     )
 
 
 if __name__ == "__main__":
