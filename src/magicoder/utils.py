@@ -9,9 +9,10 @@ from typing import Any, Iterable, Mapping, Sequence, TypeVar
 import openai
 import tenacity
 import tiktoken
-import vertexai
-from google.api_core.exceptions import InternalServerError, ResourceExhausted
-from vertexai.preview.generative_models import FinishReason, GenerativeModel
+
+# import vertexai
+# from google.api_core.exceptions import InternalServerError, ResourceExhausted
+# from vertexai.preview.generative_models import FinishReason, GenerativeModel
 
 N_CORES = 1 if (count := os.cpu_count()) is None or count == 0 else count // 2
 
