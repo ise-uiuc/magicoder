@@ -125,7 +125,7 @@ def parse_response(response_text: str) -> tuple[str, str] | None:
             if len(instruction) == 0:
                 return None
             index = instruction.find("\n")
-            if index != -1 and index < 10:
+            if index != -1 and index <= 10:
                 instruction = instruction[index + 1 :]
             return attributes_text, instruction.strip()
         except ValueError:
