@@ -19,6 +19,8 @@
 > [!IMPORTANT]
 > We are keeping improving the documents and adding more implementation details. Please stay tuned at [README-DEV.md](README-DEV.md) for more information.
 
+**Contact:** [Yuxiang Wei](https://yuxiang.cs.illinois.edu), [Zhe Wang](https://zhewang2001.github.io), [Yifeng Ding](https://yifeng-ding.com), [Jiawei Liu](https://www.jw-liu.xyz), [Lingming Zhang](https://lingming.cs.illinois.edu).
+
 ## About
 
 * 🎩**Magicoder** is a model family empowered by 🪄**OSS-Instruct**, a novel approach to enlightening LLMs with open-source code snippets for generating *low-bias* and *high-quality* instruction data for code.
