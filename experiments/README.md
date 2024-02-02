@@ -286,11 +286,22 @@ evalplus.evaluate --dataset $DATASET --samples $SANITIZED_PATH
 
 ## Reproduce MultiPL-E
 
-TBD
+We use [bigcode-evaluation-harness](https://github.com/bigcode-project/bigcode-evaluation-harness) for MultiPL-E evaluation.
 
 ## Reproduce DS-1000
 
-TBD
+Download [DS-1000 GitHub Repo](https://github.com/xlang-ai/DS-1000) and set the `PYTHONPATH` to the repo root. You would also need to tweek its source code to support the workflow. Then use the following command to perform DS-1000 generation:
+
+```bash
+python experiments/ds_1000.py \
+    --dataset_path $PATH_TO_DS1000_DATA \
+    --model_key $MODEL_KEY \
+    --model_name_or_path $MODEL_PATH \
+    --output_dir $OUTPUT_DIR \
+    --mode $MODE \
+```
+
+After that, follow DS-1000 instructions to evaluate the generated samples.
 
 ## Reproduce data analysis
 
