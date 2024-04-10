@@ -16,8 +16,13 @@
     | 🙏&nbsp;<a href="#-acknowledgements">Acknowledgements</a>
 </p>
 
-> [!IMPORTANT]
-> We are keeping improving the documents and adding more implementation details. Please stay tuned at [README-DEV.md](README-DEV.md) for more information.
+**We are thrilled that Magicoder and OSS-Instruct have inspired many amazing projects, including:**
+
+- [CodeGemma](https://storage.googleapis.com/deepmind-media/gemma/codegemma_report.pdf)
+- [OpenCodeInterpreter](https://opencodeinterpreter.github.io)
+- [RTLCoder](https://arxiv.org/abs/2312.08617)
+- [CodeUltraFeedback](https://arxiv.org/abs/2403.09032)
+- [speechless-coder-ds-6.7b](https://huggingface.co/uukuguy/speechless-coder-ds-6.7b)
 
 **Contact:** [Yuxiang Wei](https://yuxiang.cs.illinois.edu), [Zhe Wang](https://zhewang2001.github.io), [Yifeng Ding](https://yifeng-ding.com), [Jiawei Liu](https://www.jw-liu.xyz), [Lingming Zhang](https://lingming.cs.illinois.edu).
 
@@ -25,6 +30,7 @@
 
 * 🎩**Magicoder** is a model family empowered by 🪄**OSS-Instruct**, a novel approach to enlightening LLMs with open-source code snippets for generating *low-bias* and *high-quality* instruction data for code.
 * 🪄**OSS-Instruct** mitigates the *inherent bias* of the LLM-synthesized instruction data by empowering them with *a wealth of open-source references* to produce more diverse, realistic, and controllable data.
+
 
 > [!IMPORTANT]
 > * [Magicoder-*S*-DS-6.7B](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) outperforms `gpt-3.5-turbo-1106` and [Gemini Ultra](https://deepmind.google/technologies/gemini/) on HumanEval (**76.8** vs. [72.6 and 74.4])!
