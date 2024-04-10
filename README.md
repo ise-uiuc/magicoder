@@ -18,7 +18,7 @@
 
 **We are thrilled that Magicoder and OSS-Instruct have inspired many amazing projects, including:**
 
-- [CodeGemma](https://storage.googleapis.com/deepmind-media/gemma/codegemma_report.pdf)
+- [Google CodeGemma](https://storage.googleapis.com/deepmind-media/gemma/codegemma_report.pdf)
 - [OpenCodeInterpreter](https://opencodeinterpreter.github.io)
 - [RTLCoder](https://arxiv.org/abs/2312.08617)
 - [CodeUltraFeedback](https://arxiv.org/abs/2403.09032)
