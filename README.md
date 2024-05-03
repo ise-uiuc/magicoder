@@ -1,7 +1,7 @@
 # 🎩 Magicoder: Source Code Is All You Need
 
 <p align="left">
-    <a href="https://openreview.net/forum?id=1qvx610Cu7"><img src="https://img.shields.io/badge/Paper-ICML'24-a55fed.svg?style=for-the-badge" alt="Paper" class="img-fluid"/></a>
+    <a href="https://openreview.net/forum?id=XUeoOBid3x"><img src="https://img.shields.io/badge/Paper-ICML'24-a55fed.svg?style=for-the-badge" alt="Paper" class="img-fluid"/></a>
     <a href="https://arxiv.org/abs/2312.02120"><img src="https://img.shields.io/badge/arXiv-2312.02120-b31b1b.svg?style=for-the-badge">
     <a href="https://opensource.org/license/mit/"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge">
     <a href="https://huggingface.co/ise-uiuc/"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-ise--uiuc-%23ff8811.svg?style=for-the-badge">
