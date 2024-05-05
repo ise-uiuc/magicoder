@@ -65,6 +65,9 @@ CUDA_VISIBLE_DEVICES=0 python magicoder_demo.py \
    --device "cuda:0" \
    --port 8080
 ```
+### Replicate Demo and API
+You can also try `Magicoder` on Replicate: [![Replicate](https://replicate.com/cjwbw/Magicoder/badge)](https://replicate.com/cjwbw/Magicoder) 
+
 
 ## 📚 Dataset
 
