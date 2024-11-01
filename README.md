@@ -154,6 +154,23 @@ print(todo.get_tasks())  # Output: []
 ## 📝 Citation
 
 ```bibtex
+@InProceedings{wei2024magicoder,
+  title = 	 {Magicoder: Empowering Code Generation with {OSS}-Instruct},
+  author =       {Wei, Yuxiang and Wang, Zhe and Liu, Jiawei and Ding, Yifeng and Zhang, Lingming},
+  booktitle = 	 {Proceedings of the 41st International Conference on Machine Learning},
+  pages = 	 {52632--52657},
+  year = 	 {2024},
+  volume = 	 {235},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {21--27 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {https://raw.githubusercontent.com/mlresearch/v235/main/assets/wei24h/wei24h.pdf},
+  url = 	 {https://proceedings.mlr.press/v235/wei24h.html}
+}
+```
+
+<!--
+```
 @article{wei2023magicoder,
   title={Magicoder: Source Code Is All You Need},
   author={Wei, Yuxiang and Wang, Zhe and Liu, Jiawei and Ding, Yifeng and Zhang, Lingming},
@@ -161,6 +178,7 @@ print(todo.get_tasks())  # Output: []
   year={2023}
 }
 ```
+-->
 
 ## 🙏 Acknowledgements
 
